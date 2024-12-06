@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "ReadexPro";
+  font-weight: 400;
+  font-style: normal;
+  font-variant: normal;
+  font-size: 16;
+  line-height: 1.5;
+  background-color: #f8f8f8 !important;
+}
+
+button,
+a {
+  border: none;
+  box-shadow: none;
+}
+
+.ant-input-prefix {
+  margin-inline-end: 12px !important;
+}
+
+.ant-btn-variant-solid {
+  box-shadow: none;
+  border: none;
+}
+
+.ant-drawer-header-title {
+  flex-direction: row-reverse;
+}
+
+.ant-drawer-header {
+  @apply bg-lightGray;
+}
+
+.ant-drawer-header-title .ant-drawer-close {
+  @apply w-8 h-8 rounded-full bg-white text-primary m-0;
+}
+
+/* .ant-form-item-required::before {
+  content: "" !important;
+} */
+
+.ant-form-item-label {
+  font-weight: 600 !important;
+  font-size: 16px !important;
+}
+
+#topBarBtn {
+  background-image: url("/public/illustrations/Mask\ Group.svg");
+  background-size: cover cover;
+  background-position: center;
+}
+
+.ant-input::placeholder {
+  font-size: small;
+}
+
+.ant-input-outlined:focus-within {
+  box-shadow: none;
+}
+
+.custom-table .ant-table-thead > tr > th {
+  @apply bg-gray-100 first:rounded-s-lg last:rounded-e-lg py-4;
+}
+
+.custom-table td {
+  @apply !p-3;
+}
+
+.custom-table .ant-table-container {
+  @apply !grid;
+}
+
+.ant-picker-suffix {
+  @apply !text-secondary;
+}
+
+.ant-segmented-item-label {
+  @apply flex items-center justify-center;
+}
+
+.ant-image-mask {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .ant-steps-horizontal {
+    @apply w-3/4;
+  }
+
+  .ant-steps-item-container {
+    @apply w-5;
+  }
+}
+
+.ant-modal-content {
+  padding: 0 !important;
+}
+
+.ant-modal-close {
+  top: 0 !important;
+  left: 0 !important;
+}
+
+.search-input {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 300px;
+  z-index: 1000;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pac-container {
+  z-index: 2000 !important;
+}
+
+.pac-item {
+  padding: 10px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.pac-item:hover {
+  background-color: #f1f1f1;
+}
+
+.ant-picker-cell-inner {
+  @apply !w-8 !h-8 !rounded-full !inline-flex align-middle items-center justify-center;
+}
