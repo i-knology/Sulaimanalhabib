@@ -7,6 +7,9 @@ import { IoOptionsOutline } from "react-icons/io5";
 import { LuPlus } from "react-icons/lu";
 import { PiListDashesDuotone } from "react-icons/pi";
 import SearchBox from "./SearchBox";
+import OptionsSettingIcon from "./OptionsSettingIcon";
+import TableIcon from "./TableIcon";
+import GridIcon from "./GridIcon";
 
 export default function TopBar({
   openDrawer,
@@ -31,6 +34,7 @@ export default function TopBar({
             onChange={(e) => {
               search(e.target.value);
             }}
+            className='rounded-lg'
             variant="filled"
           />
         </div>
@@ -41,11 +45,11 @@ export default function TopBar({
           className="overflow-hidden"
           options={[
             {
-              icon: <PiListDashesDuotone size={24} />,
+              icon: <TableIcon />,
               value: true,
             },
             {
-              icon: <BiCategory size={24} />,
+              icon: <GridIcon />,
               value: false,
             },
           ]}
@@ -62,7 +66,7 @@ export default function TopBar({
           {
             <div className="bg-semiGray p-3 rounded-lg">
               <Dropdown menu={{ items }}>
-                <IoOptionsOutline color="#88CB60" size={26} />
+                <OptionsSettingIcon  />
               </Dropdown>
             </div>
           }
@@ -79,11 +83,11 @@ export default function TopBar({
           htmlType="button"
           type="primary"
         >
-          <span className="flex items-center justify-center transition-all duration-500 xl:group-hover:-translate-x-[-230%] group-hover:-translate-x-[-182%] md:group-hover:-translate-x-[-190%] lg:group-hover:-translate-x-[-195%]">
+          <span className="flex items-center justify-center transition-all duration-500">
             <LuPlus size={35} />
           </span>
 
-          <p className="absolute -left-[100%] transition-all duration-500 md:group-hover:left-[10%] group-hover:left-[35%] xl:group-hover:left-[29%] lg:group-hover:left-[13%]">
+          <p className="transition-all duration-500">
             <span>{text || t("add")}</span>
           </p>
         </Button>

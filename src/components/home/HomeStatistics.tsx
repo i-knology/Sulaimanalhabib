@@ -2,7 +2,7 @@ import { getMeetingStatistics } from "@/services/home";
 import { years } from "@/utils/getYears";
 import { useQuery } from "@tanstack/react-query";
 import { Select } from "antd";
-import ApexCharts from "react-apexcharts";
+// import ApexCharts from "react-apexcharts";
 import { useTranslation } from "react-i18next";
 import { IoIosArrowDown } from "react-icons/io";
 import { SlCalender } from "react-icons/sl";
@@ -113,7 +113,7 @@ export default function HomeStatistics() {
       }
       className="col-span-2"
     >
-      <ApexCharts
+      {/* <ApexCharts
         series={[
           {
             name: t("meetings"),
@@ -174,7 +174,7 @@ export default function HomeStatistics() {
             },
           },
         }}
-      />
+      /> */}
     </CardWithHeader>
   );
 }

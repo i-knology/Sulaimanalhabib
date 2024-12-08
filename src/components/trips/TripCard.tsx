@@ -6,6 +6,8 @@ import { MdOutlineLocationOn } from "react-icons/md";
 import { Link } from "react-router-dom";
 import Card from "../ui/Card";
 import Status from "../ui/Status";
+import FileIcon from "../projects/FileIcon";
+import CalenderIcon from "../projects/CalenderIcon";
 
 export default function TripCard() {
   const { t } = useTranslation();
@@ -35,13 +37,13 @@ export default function TripCard() {
         <List>
           <List.Item className="gap-3 !justify-start !p-0">
             <div className="flex items-center justify-center w-10 h-10 flex-shrink-0 text-content bg-lightGray rounded-full">
-              <MdOutlineLocationOn size={22} />
+              <FileIcon />
             </div>
-            <Typography>اسم الادارة التابع لها</Typography>
+            <Typography>{t("departmentName")}</Typography>
           </List.Item>
           <List.Item className="gap-3 !justify-start !p-0 mt-4">
             <div className="flex items-center justify-center w-10 h-10 flex-shrink-0 text-content bg-lightGray rounded-full">
-              <LuCalendarClock size={22} />
+              <CalenderIcon />
             </div>
             <Typography> 12 نوفمبر 2023 - 12 نوفمبر 2024</Typography>
           </List.Item>

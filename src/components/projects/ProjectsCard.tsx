@@ -7,6 +7,9 @@ import Status from "../ui/Status";
 import { Link } from "react-router-dom";
 import { formatDateRange } from "@/utils/displayDate";
 import ProjectStatus from "./ProjectStatus";
+import OrgInfoIcon from "./orgInfoIcon";
+import FileIcon from "./FileIcon";
+import CalenderIcon from "./CalenderIcon";
 
 export interface Project {
   projectName: string;
@@ -31,7 +34,7 @@ export default function ProjectsCard({ project }: { project: Project }) {
   return (
     <Card className="cursor-pointer">
       <Link to={`/projects/${project?.id}`}>
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           <ProjectStatus id={project?.statusInfo?.id} />
           <Status
             color={project?.isInternal ? "#4CADCF" : "#9B51E0"}
@@ -42,41 +45,47 @@ export default function ProjectsCard({ project }: { project: Project }) {
             }`}
             className="mx-2"
           />
-        </div>
+        </div> */}
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 flex-shrink-0 text-secondary bg-lightGray rounded-full">
-            <PiFileTextDuotone size={20} />
+        <div className="w-full items-center gap-3">
+          <div className="flex justify-between">
+            <div className="flex gap-[8px] items-center">
+              <div className="flex items-center justify-center w-10 h-10 flex-shrink-0 text-secondary bg-lightGray rounded-full">
+                <FileIcon />
+              </div>
+              <Typography.Paragraph
+                ellipsis={{
+                  rows: 1,
+                }}
+                className="!mb-0 text-base"
+              >
+                {project?.projectName || t("notAvailable")}
+              </Typography.Paragraph>
+              {/* <span className="flex-1"></span> */}
+
+            </div>
+            <ProjectStatus id={project?.statusInfo?.id} />
           </div>
-          <Typography.Paragraph
-            ellipsis={{
-              rows: 1,
-            }}
-            className="!mb-0 text-base"
-          >
-            {project?.projectName || "-"}
-          </Typography.Paragraph>
-          <span className="flex-1"></span>
         </div>
         <Typography.Paragraph className="mt-3 text-content">
-          {project?.description || "-"}
+          {project?.description || t("notAvailable")}
         </Typography.Paragraph>
         <Divider className="my-4 border-gray-100" />
         <List>
           <List.Item className="gap-3 !justify-start !p-0">
             <div className="flex items-center justify-center w-10 h-10 flex-shrink-0 text-content bg-lightGray rounded-full">
-              <PiFileTextDuotone size={20} />
+              <OrgInfoIcon />
             </div>
-            <Typography>{project?.orgInfo?.title || "-"}</Typography>
+            <Typography>{project?.orgInfo?.title || t("notAvailable")}</Typography>
           </List.Item>
           <List.Item className="gap-3 !justify-start !p-0 mt-4">
             <div className="flex items-center justify-center w-10 h-10 flex-shrink-0 text-content bg-lightGray rounded-full">
-              <SlCalender size={20} />
+              <CalenderIcon />
             </div>
             <Typography>
               {project?.startDate
                 ? formatDateRange(project?.startDate, project?.endDate)
-                : "-"}
+                : t("notAvailable")}
             </Typography>
           </List.Item>
         </List>

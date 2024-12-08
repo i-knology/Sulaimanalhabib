@@ -73,7 +73,7 @@ export default function TeamMemberCard({ member, refetch }: MemberCardProp) {
 
             <div className="mx-2 w-full flex flex-col">
               <span>{member?.userInfo?.name}</span>
-              <span className="text-primary">
+              <span className="text-[#828282] text-sm font-normal">
                 {i18n.language == "ar"
                   ? member?.typeLookupInfo?.nameAr
                   : member?.typeLookupInfo?.nameEn}
@@ -81,14 +81,14 @@ export default function TeamMemberCard({ member, refetch }: MemberCardProp) {
             </div>
           </div>
         </div>
-        <Button
+        {/* <Button
           className="bg-red-50 text-red-700"
           onClick={() => {
             handleConfirm();
           }}
         >
           <RiDeleteBinLine size={20} />
-        </Button>
+        </Button> */}
       </div>
       <div className="h-[1px] bg-semiGray w-full mt-2" />
     </div>
