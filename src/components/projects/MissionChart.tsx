@@ -1,5 +1,5 @@
 import { Avatar, Space, Typography } from "antd";
-// import ReactApexChart from "react-apexcharts";
+import ReactApexChart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 // import { useQuery } from "@tanstack/react-query";
 // import { useParams } from "react-router-dom";
@@ -49,12 +49,12 @@ export default function MissionChart() {
   return (
     <div className="grid grid-cols-2 gap-12">
       <div>
-        {/* <ReactApexChart
+        <ReactApexChart
           options={chartOptions}
           series={series}
           type="radialBar"
           height={250}
-        /> */}
+        />
       </div>
       <div className="flex flex-col items-center justify-around">
         <div>

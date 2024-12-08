@@ -14,7 +14,6 @@ import Tasks from "@/pages/tasks";
 import Trips from "@/pages/trips";
 import Guard from "./Guard";
 import CommitteeDetails from "@/components/committeesConcils/CommitteeDetails";
-import Missions from "@/pages/missions/page";
 
 const routes = [
   {
@@ -36,10 +35,6 @@ const routes = [
         path: "projects",
         element: <Projects />,
         children: [{ path: ":projectId", element: <ProjectDetails /> }],
-      },
-      {
-        path: "missions",
-        element: <Missions />,
       },
       // {
       //   path: "trips",

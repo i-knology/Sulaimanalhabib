@@ -7,7 +7,6 @@ import { TbUsersGroup } from "react-icons/tb";
 import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../../public/logo.png";
-import MissionIcon from "./MissionIcon";
 
 export default function SideBar() {
   const { t, i18n } = useTranslation();
@@ -38,11 +37,6 @@ export default function SideBar() {
       icon: <IoDocumentTextOutline className="text-2xl" />,
       path: "/projects",
       content: t("projects"),
-    },
-    {
-      icon: <MissionIcon />,
-      path: "/missions",
-      content: t("missions"),
     },
     {
       icon: <FaUsersGear className="text-2xl" />,
