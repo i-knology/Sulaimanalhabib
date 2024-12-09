@@ -66,8 +66,8 @@ a {
   @apply bg-gray-100 first:rounded-s-lg last:rounded-e-lg py-4;
 }
 
-.custom-table td {
-  @apply !p-3;
+.custom-table div {
+  @apply !m-0;
 }
 
 .custom-table .ant-table-container {

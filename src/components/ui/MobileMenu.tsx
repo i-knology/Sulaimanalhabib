@@ -1,67 +1,30 @@
-import { Drawer, Flex } from "antd";
+import { logout } from "@/redux/slices/loginSlice";
+import { Divider, Drawer, Flex, Image, Typography } from "antd";
 import { t } from "i18next";
 import { useState } from "react";
-import { BiTask, BiTrip } from "react-icons/bi";
-import { FaUsersGear } from "react-icons/fa6";
+import { BiChevronLeft } from "react-icons/bi";
+import { CiGlobe, CiLogout } from "react-icons/ci";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { IoCloseOutline, IoDocumentTextOutline } from "react-icons/io5";
-import { LuCalendarCheck } from "react-icons/lu";
-import { RiHomeLine } from "react-icons/ri";
-import { TbUsersGroup } from "react-icons/tb";
+import { IoCloseOutline } from "react-icons/io5";
+import { useDispatch } from "react-redux";
 import logo from "../../../public/logo.png";
 import HeaderButton from "./HeaderButton";
 import MobileMenuItem from "./MobileMenuItem";
+import { menuItems } from "./SideBar";
 
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
-
-  const menuItems = [
-    {
-      icon: <RiHomeLine className="text-2xl" />,
-      path: "/",
-      content: t("home"),
-    },
-    {
-      icon: <LuCalendarCheck className="text-2xl" />,
-      path: "/meetings",
-      content: t("meetings"),
-    },
-    // {
-    //   icon: <SlCalender className="text-2xl" />,
-    //   path: "/",
-    //   content: t("calendar"),
-    // },
-    {
-      icon: <IoDocumentTextOutline className="text-2xl" />,
-      path: "/projects",
-      content: t("projects"),
-    },
-    {
-      icon: <FaUsersGear className="text-2xl" />,
-      path: "/committees-councils",
-      content: t("committeesCouncils"),
-    },
-    {
-      icon: <BiTrip className="text-2xl" />,
-      path: "/trips",
-      content: t("trips"),
-    },
-    {
-      icon: <TbUsersGroup className="text-2xl" />,
-      path: "/members",
-      content: t("members"),
-    },
-    {
-      icon: <BiTask className="text-2xl" />,
-      path: "/tasks",
-      content: t("tasks"),
-    },
-  ];
+  const dispatch = useDispatch();
 
   return (
     <>
       <HeaderButton
-        icon={<GiHamburgerMenu color="black" size={20} />}
+        icon={
+          <GiHamburgerMenu
+            color="black"
+            size={20}
+          />
+        }
         onClick={() => setIsOpen(!isOpen)}
       />
 
@@ -75,68 +38,114 @@ export default function MobileMenu() {
         headerStyle={{
           display: "none",
         }}
+        classNames={{
+          body: "bg-menu",
+        }}
       >
-        <IoCloseOutline
-          className="cursor-pointer"
-          size={36}
-          onClick={() => setIsOpen(false)}
-        />
-
         <Flex
-          vertical
-          style={{
-            backgroundColor: "#F2F2F2",
-          }}
-          justify="center"
-          className=" text-2xl gap-6 mt-1"
+          justify="space-between"
+          className="text-2xl gap-6 mt-1 "
         >
-          <div className="fixed-item  bg-primary rounded-lg flex justify-center">
-            <div className={"py-2 mx-2 w-1/2"}>
-              <img className="w-full" src={logo} alt="logo" />
-            </div>
-          </div>
+          <img
+            src={logo}
+            alt="logo"
+            width={100}
+          />
+          <IoCloseOutline
+            className="cursor-pointer text-white"
+            size={36}
+            onClick={() => setIsOpen(false)}
+          />
         </Flex>
 
-        <Flex vertical className="text-xl my-5 items-center justify-center">
+        <Divider />
+        <Flex
+          className="p-3 rounded-md border border-white/20 "
+          align="center"
+        >
+          <Image
+            src="/illustrations/profile-image.svg"
+            alt=""
+            width={40}
+            height={40}
+          />
+          <div className="mx-2 text-sm">
+            <p className="text-white">Mohamed</p>
+            <p className="text-gray-400">المنصب</p>
+          </div>
+
+          <span className="flex-1"></span>
+          <BiChevronLeft
+            size={24}
+            className="text-white flex-shrink-0"
+          />
+        </Flex>
+        <Divider />
+
+        <Typography className="text-white">{t("menu")}</Typography>
+        <Flex
+          vertical
+          className="text-xl my-5"
+        >
           {menuItems.map((item, index) => (
-            <div key={index} className="w-full">
+            <div
+              key={index}
+              className="w-full"
+            >
               <MobileMenuItem
                 key={index}
                 route={{
-                  name: item.content,
+                  name: t(item.content),
                   path: item.path,
                   icon: item.icon,
                 }}
                 fontSize={16}
                 onChange={() => setIsOpen(false)}
               />
-              <div className="border-[.5px] border-solid border-gray-100"></div>
+              <Divider className="my-2" />
             </div>
           ))}
-
-          {/* <div className="my-5">
-            <MobileMenuItem
-              route={{
-                name: t("profile"),
-                path: "/profile",
-                icon: <CiUser />,
-              }}
-              fontSize={16}
-              onChange={() => setIsOpen(false)}
-            />
-            <MobileMenuItem
-              route={{
-                name: t("logout"),
-                path: "/logout",
-                icon: <IoIosLogOut />,
-              }}
-              danger={true}
-              fontSize={16}
-              onChange={() => {
-                setIsOpen(false);
-              }}
-            />
-          </div> */}
+        </Flex>
+        <Typography className="text-white">{t("additionalLinks")}</Typography>
+        <Flex
+          vertical
+          className="my-4"
+        >
+          {/* <MobileMenuItem
+            route={{
+              name: t("addNewMeeting"),
+              path: "#newMeeting",
+              icon: <FaRegCalendarPlus size={20} />,
+            }}
+            fontSize={16}
+            onChange={() => {
+              console.log("dddd");
+            }}
+          />
+          <Divider className="my-2" /> */}
+          <MobileMenuItem
+            route={{
+              name: t("changeLanguage"),
+              path: "#changeLanguage",
+              icon: <CiGlobe size={20} />,
+            }}
+            fontSize={16}
+            onChange={() => {
+              console.log("dddd");
+            }}
+          />
+          <Divider className="my-2" />
+          <MobileMenuItem
+            route={{
+              name: t("logOut"),
+              path: "#logout",
+              icon: <CiLogout size={20} />,
+            }}
+            fontSize={16}
+            onChange={() => {
+              dispatch(logout());
+            }}
+          />
         </Flex>
       </Drawer>
     </>

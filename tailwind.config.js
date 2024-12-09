@@ -7,11 +7,12 @@ export default {
         primary: "#22BEEF",
         secondary: "#006CB5",
         background: "#fbfbfb",
-        content: "#939393",//400
-        lightGray: "#F9FAFB",//50
-        semiGray: "#F3F4F6",//100
+        content: "#939393", //400
+        lightGray: "#F9FAFB", //50
+        semiGray: "#F3F4F6", //100
         white: "#FFFFFF",
         black: "#000000",
+        menu: "#02151F",
       },
       screens: {
         "lg-md": "996px",

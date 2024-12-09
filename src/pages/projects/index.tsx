@@ -1,18 +1,12 @@
 import ApiOptions, { initialState } from "@/assets/reducers/apiOptions";
 import DisplayCards from "@/components/projects/DisplayCards";
-import ProjectForm, {
-  ProjectFormValues,
-} from "@/components/projects/ProjectForm";
+import ProjectForm, { ProjectFormValues } from "@/components/projects/ProjectForm";
 import ProjectTable from "@/components/projects/ProjectTable";
 import StatusPanel from "@/components/projects/StatusPanel";
 import FormBtn from "@/components/ui/FormBtn";
 import TopBar from "@/components/ui/TopBar";
 import useResultModal from "@/hooks/useModal";
-import {
-  createProject,
-  getAllProjects,
-  updateProject,
-} from "@/services/projects";
+import { createProject, getAllProjects, updateProject } from "@/services/projects";
 import errorException from "@/utils/errorException";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Drawer } from "antd";
@@ -29,9 +23,7 @@ export default function Projects() {
   const globalModal = useResultModal();
 
   // State management
-  const [errors, setErrors] = useState<
-    [{ [key: string]: string }] | string | null
-  >(null);
+  const [errors, setErrors] = useState<[{ [key: string]: string }] | string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [displayItems, setDisplayItems] = useState(false);
   const [searchKey, setSearchKey] = useState<string>();
@@ -76,7 +68,7 @@ export default function Projects() {
   // Mutation for creating a project
   const mutation = useMutation({
     mutationFn: (values: ProjectFormValues) =>
-      projectId ? createProject(values) : updateProject(values),
+      projectId ? updateProject(values) : createProject(values),
     onSuccess: handleSuccess,
     onError: handleError,
   });

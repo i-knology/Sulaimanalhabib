@@ -64,7 +64,7 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
           <ConfigProvider
             theme={lightTheme}
-            
+            direction={i18n.language == "ar" ? "rtl" : "ltr"}
             locale={i18n.language == "ar" ? ar_eg : en_us}
             input={{
               autoComplete: "off",

@@ -14,14 +14,14 @@ export default function MobileMenuItem({
       to={route.path}
       key={route.key}
       onClick={onChange}
-      className={() =>
+      className={`${
         location.pathname === route.path
-          ? "active-class w-full flex bg-primary text-white rounded-lg"
-          : "inactive-class w-full rounded-lg"
-      }
+          ? "active-class w-full flex bg-primary text-white"
+          : "text-white/50"
+      } rounded-md p-2 block`}
     >
-      <div className="flex my-2 gap-2 ">
-        {cloneElement(route?.icon ?? <RxDashboard />,)}
+      <div className="flex gap-2">
+        {cloneElement(route?.icon ?? <RxDashboard />)}
         <p
           style={{
             fontSize: fontSize,

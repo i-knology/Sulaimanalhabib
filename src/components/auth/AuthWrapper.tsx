@@ -19,17 +19,17 @@ export default function AuthWrapper() {
         <div className="w-full h-full bg-gradient-to-t from-primary/[0.92] to-secondary/[0.92] flex items-end justify-center">
           <div className="space-y-4 w-full max-w-lg mx-auto text-center p-6 pb-20">
             <a
-              href="http://misa.gov.sa"
+              href={import.meta.env.VITE_SITE_URL}
               target="_blank"
               rel="noopener noreferrer"
               title={import.meta.env.VITE_APP_NAME}
               aria-label={import.meta.env.VITE_APP_NAME}
-              className="mx-auto table"
+              className="mx-auto table mb-8"
             >
               <img
                 src="/logo.png"
-                width={273}
-                height={78}
+                width={180}
+                // height={78}
                 alt={import.meta.env.VITE_APP_NAME}
               />
             </a>

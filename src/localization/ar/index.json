@@ -39,7 +39,7 @@
     "searchAbout": "البحث عن...",
     "addNewMission": "اضافه مهمة جديدة",
     "allMissions": "كل المهام",
-    
+
     "createdBy": "أنشأت من قبل",
     "missionResponsibility": "مسئول المهمة",
     "missionImportance": "اهمية المهمة",
@@ -61,8 +61,8 @@
     "departmentName": "اسم الادارة التابع لها",
     "projectName": "اسم المشروع",
     "addNewProject": "اضافه مشروع جديد",
-    "updateProject":"تعديل المشروع",
-    "updateCommittee":"تعديل اللجنه",
+    "updateProject": "تعديل المشروع",
+    "updateCommittee": "تعديل اللجنه",
     "projectDescription": "وصف المشروع",
     "startsAt": "يبدا في",
     "endsAt": "ينتهي في",
@@ -70,7 +70,7 @@
     "addAnotherTask": "اضافة مهمة اخري",
     "taskName": "اسم المهمة",
     "selectTaskTeam": "قم باختيار فريق المهمة",
-    "addTask":"اضافة مهمه جديده",
+    "addTask": "اضافة مهمه جديده",
     "dragAndDropFiles": "قم بسحب وادراج الملفات هنا او ",
     "uploadAttachments": "تحميل المرفقات",
     "projectDetails": "تفاصيل المشروع",
@@ -211,7 +211,7 @@
     "removedSuccessfully": "تمت إزالة العضو بنجاح",
 
     "meetingMembers": "اعضاء الاجتماع",
-    
+
     "externalMembers": "الاعضاء الخارجين",
     "teamMembers": "الاعضاء",
     "createdSuccessfully": "تم الإنشاء بنجاح",
@@ -278,7 +278,11 @@
     "saveLocation": "حفظ الموقع",
 
     "projectMembers": "أعضاء المشروع",
-    "committeeMmeber": "أعضاء اللحنه"
+    "committeeMmeber": "أعضاء اللحنه",
+
+    "additionalLinks": "روابط اضافية",
+    "menu": "القائمة",
+    "changeLanguage": "تغيير اللغة"
   },
   "validation": {
     "requiredField": "يجب ملئ الحقل",
