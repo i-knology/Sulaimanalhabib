@@ -1,10 +1,11 @@
 import type { TableProps } from "antd";
-import { Table, Typography } from "antd";
+import { Avatar, Table, Tooltip, Typography } from "antd";
 import dayjs from "dayjs";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Project } from "./ProjectsCard";
 import ProjectStatus from "./ProjectStatus";
+import MissionImportanceStatus from "./MissionImportanceStatus";
 
 interface MissionTableProps {
   data: any[];
@@ -26,8 +27,8 @@ const MissionTable: React.FC<MissionTableProps> = ({
   const columns: TableProps["columns"] = [
     {
       title: t("mission"),
-      dataIndex: "projectName",
-      key: "projectName",
+      dataIndex: "title",
+      key: "title",
     },
     {
       title: t("project"),
@@ -37,7 +38,7 @@ const MissionTable: React.FC<MissionTableProps> = ({
     {
       title: t("createdBy"),
       key: "orgInfo",
-      dataIndex: ["orgInfo", "userInfo", "name"],
+      dataIndex: ["createdUserInfo", "name"],
       render: (value) => {
         return (
           <Typography.Paragraph
@@ -53,25 +54,39 @@ const MissionTable: React.FC<MissionTableProps> = ({
     {
       title: t("missionResponsibility"),
       key: "orgInfo",
-      dataIndex: ["orgInfo", "userInfo", "name"],
+      dataIndex: ["userInfo", "name"],
       render: (value) => {
+        console.log("🚀 ~ value:", value)
         return (
-          <Typography.Paragraph
-            ellipsis={{
-              rows: 1,
-            }}
-          >
-            {value}
-          </Typography.Paragraph>
+          <Avatar.Group
+          size="small"
+          max={{
+            count: 2,
+            style: {
+              color: "#22baed",
+              backgroundColor: "#F3F4F6",
+              cursor: "pointer",
+            },
+            popover: { trigger: "click" },
+          }}
+        >
+            <Tooltip title={value} placement="top">
+              <Avatar
+                style={{ backgroundColor: "#F5F5F5", color: '#0A0A0A' }}
+                // src={value?.profilePictureUrl}
+                
+              >{value.slice(0,2)}</Avatar>
+            </Tooltip>
+        </Avatar.Group>
         );
       },
     },
     {
       title: t("missionImportance"),
-      dataIndex: "statusInfo",
+      dataIndex: ["priorityInfo"],
       key: "statusInfo",
       render: (value) => {
-        return <ProjectStatus id={value?.id} />;
+        return <MissionImportanceStatus id={value?.id} />;
       },
     },
     {
