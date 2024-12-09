@@ -11,11 +11,12 @@ import FormBtn from "@/components/ui/FormBtn";
 import MissionTopBar from "@/components/ui/MissionsTopbar";
 import TopBar from "@/components/ui/TopBar";
 import useResultModal from "@/hooks/useModal";
+import { getAllMissions } from "@/services/missions";
 import {
   createProject,
-  getAllProjects,
   updateProject,
 } from "@/services/projects";
+
 import errorException from "@/utils/errorException";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Drawer } from "antd";
@@ -27,7 +28,7 @@ import { Outlet, useParams } from "react-router-dom";
 
 export default function Missions() {
   const { t } = useTranslation();
-  const { projectId } = useParams();
+  const { missionId } = useParams();
   const queryClient = useQueryClient();
   const globalModal = useResultModal();
 
@@ -43,19 +44,20 @@ export default function Missions() {
 
   // Fetch projects
   const { data, isFetching } = useQuery({
-    queryKey: ["projects", filterOptions, searchKey, statusId],
+    queryKey: ["missions", filterOptions, searchKey, statusId],
     queryFn: () => {
       const params = searchKey
         ? { ...(searchKey ? { Name: searchKey } : {}) }
         : {
-            ...(searchKey ? { Name: searchKey } : {}),
-            ...filterOptions,
-            ...(statusId ? { StatusId: statusId } : {}),
-          };
-      return getAllProjects(params);
-    },
+          ...(searchKey ? { Name: searchKey } : {}),
+          ...filterOptions,
+          ...(statusId ? { StatusId: statusId } : {}),
+        };
+        return getAllMissions(params);
+      },
   });
-
+  
+  console.log("🚀 ~ Missions ~ data:", data)
   // Handlers
   const toggleDrawer = () => setIsOpen((prev) => !prev);
   const toggleDisplayItems = () => setDisplayItems((prev) => !prev);
@@ -68,7 +70,7 @@ export default function Missions() {
     setErrors(null);
     setStatusId(0);
     setSearchKey("");
-    queryClient.invalidateQueries({ queryKey: ["projects", filterOptions] });
+    queryClient.invalidateQueries({ queryKey: ["missions", filterOptions] });
     globalModal.success({ title: t("createdSuccessfully"), subtitle: "" });
   };
 
@@ -79,7 +81,7 @@ export default function Missions() {
   // Mutation for creating a project
   const mutation = useMutation({
     mutationFn: (values: ProjectFormValues) =>
-      projectId ? createProject(values) : updateProject(values),
+      missionId ? createProject(values) : updateProject(values),
     onSuccess: handleSuccess,
     onError: handleError,
   });
@@ -115,7 +117,7 @@ export default function Missions() {
 
   return (
     <div className="p-2 space-y-4">
-      {!projectId && (
+      {!missionId && (
         <>
           <TopBar
             text={t("addNewMission")}
