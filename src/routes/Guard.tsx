@@ -1,8 +1,8 @@
+import { handleLogin } from "@/redux/slices/loginSlice";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import Cookies from "universal-cookie";
-import { handleLogin } from "@/redux/slices/loginSlice";
 
 const cookies = new Cookies();
 
@@ -30,7 +30,7 @@ export default function Guard({ children, type }: GuardProps) {
   const isPrivate = type === "Private";
 
   if (isPrivate && !user?.id && !token) {
-    return <Navigate to="/auth" />;
+    return <Navigate to="/auth/login" />;
   }
 
   return <>{children}</>;
