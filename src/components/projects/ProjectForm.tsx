@@ -2,37 +2,35 @@ import useErrors from "@/hooks/useError";
 import { getMembers } from "@/services/meetings";
 import { getAllDepartment, getAllManagers } from "@/services/projects";
 import { useQuery } from "@tanstack/react-query";
-import { Button, DatePicker, Form, Input, Select } from "antd";
+import { DatePicker, Form, Input, Select } from "antd";
 import dayjs from "dayjs";
-import { forwardRef, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AiOutlineCloudUpload } from "react-icons/ai";
 import { IoIosArrowDown } from "react-icons/io";
 import { SlCalender } from "react-icons/sl";
+import AttachmentUploader from "../ui/AttachmentUploader";
 import { renderSelectOptions } from "../ui/RenderSelectOptions";
 import useSetProjectValues from "./useSetProjectValues";
-import { mergeUniqueArrays } from "@/utils/mergeArrays";
 
 export interface ProjectFormValues {
+  id?: string;
   projectName?: string;
   name: string;
   description: string;
-  orgId?: number | { value: number };
+  orgId: { value: number };
   isInternal: boolean;
   startDate: string;
   endDate: string;
-  deptId?: number | { value: number };
-  orgInfo?: { id: number; title: string };
+  deptId: { value: number };
+  orgInfo: { id: number; title: string };
   MemberIds?: { label: string; value: string }[] | string[];
   members?: { userInfo?: { id?: string; name: string } }[];
 }
 interface ProjectFormProps {
-  action: (values: ProjectFormValues) => void;
+  action: (values: ProjectFormValues) => Promise<void>;
   errors: [{ [key: string]: string }] | string | null;
-  data?: ProjectFormValues | boolean | undefined;
+  data?: any;
 }
-const normalizeSelectValue = (deptId: number | { value: number } | undefined) =>
-  typeof deptId === "object" && deptId !== null ? deptId.value : deptId || 1;
 
 const mapDepartments = (departmentsData: any, language: string) =>
   departmentsData?.map((el) => ({
@@ -40,21 +38,16 @@ const mapDepartments = (departmentsData: any, language: string) =>
     value: el?.id,
   }));
 
-export default function ProjectForm({
-  action,
-  errors,
-  data,
-}: ProjectFormProps) {
+export default function ProjectForm({ action, errors, data }: ProjectFormProps) {
   const { t, i18n } = useTranslation();
   const [form] = Form.useForm();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [memberName, setMemberName] = useState("");
+  const [files, setFiles] = useState<any>();
+
   const { data: departments, isFetching } = useQuery({
     queryKey: ["Departments"],
     queryFn: () =>
-      getAllDepartment().then((res) =>
-        mapDepartments(res?.data?.items || [], i18n.language)
-      ),
+      getAllDepartment().then((res) => mapDepartments(res?.data?.items || [], i18n.language)),
   });
 
   const { data: orgs, isFetching: isFetchingManagers } = useQuery({
@@ -62,7 +55,7 @@ export default function ProjectForm({
     queryFn: () =>
       getAllManagers().then((data) => {
         return data?.data?.map((el) => {
-          return { label: el?.title, value: el?.id };
+          return { label: el?.userInfo?.name, value: el?.id };
         });
       }),
   });
@@ -70,40 +63,80 @@ export default function ProjectForm({
   const { data: members, isFetching: isFetchingMembers } = useQuery({
     queryKey: ["Members", memberName],
     queryFn: () =>
-      getMembers({ PageIndex: 1, PageSize: 10, Name: memberName }).then(
-        (data) => {
-          return data?.data?.map((el) => {
-            return { label: el?.name, value: el?.id };
-          });
-        }
-      ),
+      getMembers({ PageIndex: 1, PageSize: 10, Name: memberName }).then((data) => {
+        return data?.data?.map((el) => {
+          return { label: el?.name, value: el?.id };
+        });
+      }),
   });
 
-  const handleAddImage = () => {
-    fileInputRef.current?.click();
-  };
   useSetProjectValues(form, data);
   useErrors(form, errors, "project");
 
-  const onFinish = (values: ProjectFormValues) => {
-    values.deptId = normalizeSelectValue(values?.deptId);
-    values.startDate = values.startDate
-      ? `${dayjs(values.startDate).utc()}`
-      : "";
+  const startDate = Form.useWatch("startDate", form);
+
+  const onFinish = async (values: ProjectFormValues) => {
+    values.deptId = values?.deptId?.value as any;
+    values.startDate = values.startDate ? `${dayjs(values.startDate).utc()}` : "";
     values.endDate = values.endDate ? `${dayjs(values.endDate).utc()}` : "";
-    values.orgId = normalizeSelectValue(values?.orgId);
+    values.orgId = values?.orgId?.value as any;
+    values.MemberIds = values.MemberIds?.map((el) => el.value);
+    values.id = data?.id;
 
-    if (data !== undefined) {
-      const memberIds = values.MemberIds?.map((el) =>
-        typeof el === "object" ? el.value : el
-      );
-      values.MemberIds = memberIds || [];
-      delete values.orgId;
-      delete values.deptId;
-    }
-
-    action(values);
+    action({ ...values, Files: files?.map((e) => e.originFileObj) } as any).then(() => {
+      if (!data) {
+        form.resetFields([
+          "deptId",
+          "endDate",
+          "MemberIds",
+          "name",
+          "description",
+          "startDate",
+          "endDate",
+          "orgId",
+          "Files",
+        ]);
+      }
+      setFiles(undefined);
+    });
   };
+
+  useEffect(() => {
+    if (data) {
+      form.setFieldsValue({
+        name: data?.projectName,
+        description: data?.description,
+        MemberId: data?.members?.map((e) => ({
+          value: e.userId,
+          label: e.userInfo?.name,
+        })),
+        deptId: data?.deptId && {
+          value: data?.department?.id,
+          label: data?.department?.[i18n.language == "ar" ? "nameAr" : "nameEn"],
+        },
+        orgId: data?.orgId && {
+          value: data?.orgInfo?.id,
+          label: data?.orgInfo?.title,
+        },
+        startDate: data?.startDate && dayjs(data?.startDate),
+        endDate: data?.endDate && dayjs(data?.endDate),
+        id: data?.id,
+      });
+    } else {
+      form.resetFields([
+        "deptId",
+        "endDate",
+        "MemberIds",
+        "name",
+        "description",
+        "startDate",
+        "endDate",
+        "orgId",
+        "Files",
+      ]);
+    }
+    setFiles(undefined);
+  }, [data]);
 
   return (
     <Form
@@ -119,7 +152,7 @@ export default function ProjectForm({
         className="my-0"
         label={t("projectName")}
       >
-        <Input variant="filled" placeholder={t("projectName") + "..."} />
+        <Input placeholder={t("projectName") + "..."} />
       </Form.Item>
 
       <Form.Item
@@ -129,128 +162,104 @@ export default function ProjectForm({
         label={t("projectDescription")}
       >
         <Input.TextArea
-          variant="filled"
           placeholder={t("projectDescription") + "..."}
+          rows={4}
         />
       </Form.Item>
 
       <div className="grid grid-cols-2 gap-x-4 mb-0 p-0">
-        <Form.Item name="startDate" className="mb-0" label={t("startsAt")}>
+        <Form.Item
+          name="startDate"
+          className="mb-0"
+          label={t("startsAt")}
+        >
           <DatePicker
-            variant="filled"
             className="w-full"
             placeholder={t("startsAt")}
             suffixIcon={<SlCalender size={20} />}
+            minDate={data?.id ? dayjs(data?.startDate) : dayjs()}
           />
         </Form.Item>
-        <Form.Item name="endDate" className="mb-0" label={t("endsAt")}>
+        <Form.Item
+          name="endDate"
+          className="mb-0"
+          label={t("endsAt")}
+        >
           <DatePicker
-            variant="filled"
             className="w-full"
             placeholder={t("endDate")}
             suffixIcon={<SlCalender size={20} />}
+            minDate={startDate ?? dayjs()}
           />
         </Form.Item>
       </div>
 
-      {data !== undefined && (
+      <Form.Item
+        name="MemberIds"
+        className="mb-0"
+        label={t("projectMembers")}
+        rules={[{ required: true, message: t("validation:requiredField") }]}
+      >
+        <Select
+          filterOption={false}
+          labelInValue
+          options={members}
+          showSearch={true}
+          mode="multiple"
+          onSearch={(value) => {
+            setMemberName(value);
+          }}
+          maxTagCount={4}
+          loading={isFetchingMembers}
+          placeholder={t("projectMembers") + "..."}
+          suffixIcon={<IoIosArrowDown size={20} />}
+        />
+      </Form.Item>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Form.Item
-          name="MemberIds"
+          name="orgId"
           className="mb-0"
-          label={t("projectMembers")}
+          label={t("projectManager")}
+          rules={[{ required: true, message: t("validation:requiredField") }]}
         >
           <Select
-            filterOption={false}
-            variant="filled"
             labelInValue
-            options={[
-              ...renderSelectOptions({
-                isLoading: isFetchingMembers,
-                options:
-                  typeof data == "object"
-                    ? mergeUniqueArrays(
-                        members || [],
-                        (data &&
-                          typeof data !== "boolean" &&
-                          data.members?.map((el) => {
-                            const name = el?.userInfo?.name || t("unknownUser");
-                            const id = el?.userInfo?.id || "";
-                            return {
-                              label: name,
-                              value: id,
-                            };
-                          })) ||
-                          []
-                      )
-                    : members,
-              }),
-            ]}
-            showSearch={true}
-            mode="multiple"
-            onSearch={(value) => {
-              setMemberName(value);
-            }}
-            placeholder={t("projectMembers") + "..."}
+            options={orgs}
+            loading={isFetchingManagers}
+            showSearch
+            placeholder={t("projectManager") + "..."}
             suffixIcon={<IoIosArrowDown size={20} />}
           />
         </Form.Item>
+
+        <Form.Item
+          name="deptId"
+          className="mb-0"
+          label={t("departmentName")}
+        >
+          <Select
+            labelInValue
+            options={renderSelectOptions({
+              isLoading: isFetching,
+              options: departments,
+            })}
+            placeholder={t("departmentName") + "..."}
+            suffixIcon={<IoIosArrowDown size={20} />}
+          />
+        </Form.Item>
+      </div>
+
+      {data && (
+        <Form.Item label={t("uploadFile")}>
+          <AttachmentUploader
+            multiple
+            onChange={(file) => {
+              setFiles(file.fileList);
+            }}
+          />
+        </Form.Item>
       )}
-
-      {data == undefined && (
-        <>
-          <Form.Item name="deptId" className="mb-0" label={t("departmentName")}>
-            <Select
-              variant="filled"
-              labelInValue
-              options={renderSelectOptions({
-                isLoading: isFetching,
-                options: departments,
-              })}
-              placeholder={t("departmentName") + "..."}
-              suffixIcon={<IoIosArrowDown size={20} />}
-            />
-          </Form.Item>
-
-          <Form.Item name="orgId" className="mb-0" label={t("projectManager")}>
-            <Select
-              variant="filled"
-              labelInValue
-              options={renderSelectOptions({
-                isLoading: isFetchingManagers,
-                options: orgs,
-              })}
-              placeholder={t("projectManager") + "..."}
-              suffixIcon={<IoIosArrowDown size={20} />}
-            />
-          </Form.Item>
-        </>
-      )}
-
-      {data !== undefined && (
-        <>
-          <Form.Item className="hidden" name="Files">
-            <FileInput ref={fileInputRef} />
-          </Form.Item>
-
-          <Form.Item label={t("addAttachments")}>
-            <Button
-              className="border-dashed border-secondary border-2 py-10 w-full bg-semiGray text-black"
-              onClick={handleAddImage}
-            >
-              <AiOutlineCloudUpload size={28} />
-              <span>{t("dragAndDropFiles")}</span>
-              <span>{t("uploadAttachments")}</span>
-            </Button>
-          </Form.Item>
-        </>
-      )}
+      {/*  */}
     </Form>
   );
 }
-
-export const FileInput = forwardRef<
-  HTMLInputElement,
-  React.InputHTMLAttributes<HTMLInputElement>
->((props, ref) => (
-  <input type="file" ref={ref} style={{ display: "none" }} {...props} />
-));

@@ -1,15 +1,12 @@
+import { formatDateRange } from "@/utils/displayDate";
 import { Divider, List, Typography } from "antd";
 import { useTranslation } from "react-i18next";
-import { PiFileTextDuotone } from "react-icons/pi";
-import { SlCalender } from "react-icons/sl";
-import Card from "../ui/Card";
-import Status from "../ui/Status";
 import { Link } from "react-router-dom";
-import { formatDateRange } from "@/utils/displayDate";
-import ProjectStatus from "./ProjectStatus";
-import OrgInfoIcon from "./orgInfoIcon";
-import FileIcon from "./FileIcon";
+import Card from "../ui/Card";
 import CalenderIcon from "./CalenderIcon";
+import FileIcon from "./FileIcon";
+import OrgInfoIcon from "./OrgInfoIcon";
+import ProjectStatus from "./ProjectStatus";
 
 export interface Project {
   projectName: string;
@@ -62,7 +59,6 @@ export default function ProjectsCard({ project }: { project: Project }) {
                 {project?.projectName || t("notAvailable")}
               </Typography.Paragraph>
               {/* <span className="flex-1"></span> */}
-
             </div>
             <ProjectStatus id={project?.statusInfo?.id} />
           </div>

@@ -29,6 +29,7 @@ async function getAllDepartment() {
 }
 
 async function getAllManagers() {
+  // return instance.get("Org/GetDownLevel").then((res) => {
   return instance.get("Org/GetDownLevel").then((res) => {
     return {
       data: res.data?.data || [],
@@ -56,8 +57,27 @@ async function createProject(data) {
 }
 
 async function createProjectTask(data) {
+  const formData = new FormData();
+
+  for (const key in data) {
+    const item = data[key];
+    if (key == "Files") {
+      item?.forEach((file) => {
+        console.log(file);
+        formData.append("Files", file, file.name);
+      });
+    } else if (key == "MemberIds") {
+      item?.forEach((member, index) => {
+        formData.append("MemberIds[" + index + "]", member);
+      });
+    } else {
+      console.log(key, item);
+      formData.append(key, item);
+    }
+  }
+
   return instance
-    .post("ProjectMession/Add", data, {
+    .post("ProjectMession/Add", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     })
     .then((res) => res.data);
@@ -65,12 +85,53 @@ async function createProjectTask(data) {
 
 async function updateProject(data) {
   const { id } = data;
+  const formData = new FormData();
+
+  for (const key in data) {
+    const item = data[key];
+    if (key == "Files") {
+      item?.forEach((file) => {
+        console.log(file);
+        formData.append("Files", file, file.name);
+      });
+    } else if (key == "MemberIds") {
+      item?.forEach((member, index) => {
+        formData.append("MemberIds[" + index + "]", member);
+      });
+    } else {
+      console.log(key, item);
+      formData.append(key, item);
+    }
+  }
+
   delete data.id;
   return instance
-    .put("Project/Edit/" + id, data, {
+    .put("Project/Edit/" + id, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     })
     .then((res) => res.data);
+}
+
+async function cancelProject(id) {
+  return instance.put(`Project/Cancel/${id}`).then((res) => res.data);
+}
+
+async function closeProject(data) {
+  return instance.put(`Project/Close/${data?.id}/${data?.isClosed}`).then((res) => res.data);
+}
+
+async function updateProjectStatus(data) {
+  return instance.put(`Project/ChangeStatus/${data?.id}/${data?.statusId}`).then((res) => res.data);
+}
+
+async function deleteProject(id) {
+  return instance.delete(`Project/Delete/${id}`).then((res) => res.data);
+}
+
+async function getProjectStatuses() {
+  return instance.get("ProjectStatusLookup/GetAll").then((res) => {
+    return res?.data || [];
+  });
 }
 
 async function removeMember(data) {
@@ -92,14 +153,19 @@ async function removeDocument(data) {
 }
 
 export {
+  cancelProject,
+  closeProject,
   createProject,
   createProjectTask,
+  deleteProject,
   getAllDepartment,
   getAllManagers,
   getAllProjects,
   getMissionStatistics,
   getProjectMembers,
+  getProjectStatuses,
   removeDocument,
   removeMember,
   updateProject,
+  updateProjectStatus,
 };

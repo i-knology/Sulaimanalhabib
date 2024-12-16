@@ -1,4 +1,4 @@
-import { Divider, Dropdown, Flex, MenuProps, Space, Typography } from "antd";
+import { Divider, Dropdown, Flex, Image, MenuProps, Space, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 import { CiLogout } from "react-icons/ci";
 import { IoIosArrowDown } from "react-icons/io";
@@ -6,20 +6,21 @@ import { IoPersonOutline } from "react-icons/io5";
 import { useLocation, useNavigate } from "react-router-dom";
 import HeaderButton from "./HeaderButton";
 import LanguageBtn from "./languageBtn";
-import MeetingDate from "./MeetingDate";
 import MobileMenu from "./MobileMenu";
 import Notification from "./Notification";
 // import ThemeToggle from "./ThemeToggle";
+import {} from "react-redux";
 
 import { logout } from "@/redux/slices/loginSlice";
 import Color from "color";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Navbar() {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { user } = useSelector((state: any) => state.auth);
   const menueItems: MenuProps["items"] = [
     {
       label: (
@@ -35,7 +36,10 @@ export default function Navbar() {
                 style={{ backgroundColor: `${Color("#22baed").alpha(0.03)}` }}
                 className={"p-2 rounded-full"}
               >
-                <IoPersonOutline size={20} color="#22baed" />
+                <IoPersonOutline
+                  size={20}
+                  color="#22baed"
+                />
               </span>
               {t("profile")}
             </p>
@@ -43,6 +47,7 @@ export default function Navbar() {
         </button>
       ),
       key: "0",
+      className: "!p-2 border-t border-t-gray-100 first:border-t-0",
     },
     {
       label: (
@@ -69,15 +74,19 @@ export default function Navbar() {
         </button>
       ),
       key: "1",
+      className: "!p-2 border-t border-t-gray-100 first:border-t-0",
     },
   ];
 
   return (
     <>
-      <div className="p-2 grid grid-cols-1 gap-2 justify-between items-center md:flex h-18 bg-white sticky top-0 z-10 shadow-sm shadow-gray-200">
+      <div className="p-3 justify-between items-center flex h-20 bg-white sticky top-0 z-10 shadow-sm shadow-gray-100">
         <Flex align="center">
-          <Divider className="py-4 px-[2px] bg-[#22BEEF]" type="vertical" />
-          <Typography className="text-2xl ">
+          <Divider
+            className="h-6 w-1 bg-primary rounded-full"
+            type="vertical"
+          />
+          <Typography className="text-lg">
             {t(location.pathname.split("/")?.[1] || "home")}
           </Typography>
         </Flex>
@@ -94,7 +103,6 @@ export default function Navbar() {
 
           <div className="flex w-full justify-between">
             <div className="flex w-full items-center gap-4  justify-around lg-md:justify-between bg-white">
-              <MeetingDate />
               <LanguageBtn />
               {/* <ThemeToggle /> */}
               <Notification />
@@ -103,9 +111,9 @@ export default function Navbar() {
                 <MobileMenu />
               </div>
 
-              <div className="hidden lg-md:block">
+              <div className="hidden lg-md:block mx-2">
                 <Divider
-                  className="py-4 px-[.5px] bg-gray-300"
+                  className="py-4 px-[.5px] bg-gray-100"
                   type="vertical"
                 />
               </div>
@@ -117,21 +125,23 @@ export default function Navbar() {
                 trigger={["click"]}
               >
                 <Space className="cursor-pointer flex justify-between">
-                  <div className="flex items-center mx-2">
-                    <img
-                      src="/illustrations/profile-image.svg"
-                      alt=""
+                  <div className="flex items-center mx-2 whitespace-nowrap">
+                    <Image
+                      src={user?.imageProfile}
+                      alt={user?.fullName}
+                      fallback="/profile.png"
+                      sizes="small"
+                      width={40}
+                      height={40}
+                      className="w-full rounded-full object-fill"
+                      preview={false}
                     />
                     <div className="mx-2 text-sm">
-                      <p>Mohamed</p>
-                      <p className="text-gray-400">المنصب</p>
+                      <p>{user?.fullName}</p>
+                      <p className="text-gray-400">{user?.mobileNo}</p>
                     </div>
                   </div>
-                  <HeaderButton
-                    icon={
-                      <IoIosArrowDown className="text-xl text-[#22BEEF]" />
-                    }
-                  />
+                  <HeaderButton icon={<IoIosArrowDown className="text-xl text-[#22BEEF]" />} />
                 </Space>
               </Dropdown>
             </div>

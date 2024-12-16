@@ -10,9 +10,9 @@ export default function MasterLayout() {
           <SideBar />
         </div>
 
-        <div className="bg-white flex-1 rounded-s-xl">
+        <div className="bg-white flex-1 rounded-s-xl flex flex-col">
           <Navbar />
-          <div className="bg-background p-2">
+          <div className="bg-background p-2 flex-1">
             <Outlet />
           </div>
         </div>

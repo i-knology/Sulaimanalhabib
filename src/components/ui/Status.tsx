@@ -14,7 +14,7 @@ export default function Status({
 
   return (
     <p
-      className={`px-3 py-2 rounded-lg text-center ${className}`}
+      className={`px-3 py-2 rounded-md text-sm text-center ${className}`}
       style={{ backgroundColor: bgColor, color: textColor }}
     >
       {text}

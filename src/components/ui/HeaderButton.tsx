@@ -8,6 +8,7 @@ export default function HeaderButton({ className, ...rest }: HeaderButtonProps) 
     <Button
       className={`border-none bg-lightGray !w-11 !h-11 !min-w-0 ${className}`}
       shape="circle"
+      type="text"
       {...rest}
     />
   );

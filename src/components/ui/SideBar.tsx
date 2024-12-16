@@ -1,5 +1,5 @@
+import ProjectIcon from "@/assets/icons/projects.svg";
 import { useTranslation } from "react-i18next";
-import { IoDocumentTextOutline } from "react-icons/io5";
 import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../../public/logo.png";
@@ -7,8 +7,8 @@ import MissionIcon from "./MissionIcon";
 
 export const menuItems = [
   {
-    icon: <IoDocumentTextOutline className="text-2xl" />,
-    path: "/projects",
+    icon: <ProjectIcon />,
+    path: "/",
     content: "projects",
   },
   {

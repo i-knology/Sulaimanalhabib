@@ -1,140 +1,174 @@
-import { Button, Form, Input } from "antd";
-import { useRef } from "react";
+import HrDivider from "@/components/ui/HrDivider";
+import type { GetProp, UploadProps } from "antd";
+import { Button, Form, Image, Input, Upload } from "antd";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { MdOutlineAddPhotoAlternate } from "react-icons/md";
+import { LuImagePlus } from "react-icons/lu";
+import { useSelector } from "react-redux";
+
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 export default function Profile() {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { t } = useTranslation();
-  const handleButtonClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+  const { user } = useSelector((state: any) => state.auth);
+  const [form] = Form.useForm();
+
+  const [imageUrl, setImageUrl] = useState<string>();
+
+  useEffect(() => {
+    form.setFieldsValue({
+      email: user?.email,
+      username: user.username,
+      fullName: user.fullName,
+      phoneNumber: user.mobileNo,
+    });
+  }, []);
+
+  const getBase64 = (img: FileType, callback: (url: string) => void) => {
+    console.log(img);
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result as string));
+    reader.readAsDataURL(img);
   };
+
   return (
     <div className="p-2 space-y-2">
-      <div className="flex items-center justify-center bg-white">
-        <Form className="md:w-3/4 w-full px-2 md:px-0 py-4" layout="vertical">
-          <div className="flex items-center justify-center mb-2">
-            <Form.Item className="hidden" name="image">
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  console.log(file);
-                }}
-              />
-            </Form.Item>
-            <button
-              type="button"
-              className="md:w-[15%] w-1/4 rounded-full relative group"
-              onClick={handleButtonClick}
-            >
-              <img
-                className="w-full rounded-full"
-                src="/illustrations/user-image.svg"
-                alt="User"
-              />
-              <div className="absolute bottom-5 cursor-pointer bg-[#03194B] p-1 rounded-lg">
-                <MdOutlineAddPhotoAlternate color="white" size={24} />
-              </div>
-              <div className="layer absolute top-0 bottom-0 right-0 left-0 cursor-pointer bg-gray-200 opacity-0 group-hover:opacity-25 transition-opacity duration-300 rounded-full"></div>
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 ">
-            <Form.Item
-              className="mb-0"
-              label={t("username")}
-              name="username"
-              rules={[
-                { required: true, message: t("validation:requiredField") },
-              ]}
-            >
-              <Input variant="filled" placeholder={`${t("username")}...`} />
-            </Form.Item>
-
-            <Form.Item
-              className="mb-0"
-              label={t("phoneNumber")}
-              name="phoneNumber"
-              rules={[
-                { required: true, message: t("validation:requiredField") },
-              ]}
-            >
-              <Input variant="filled" placeholder={`${t("phoneNumber")}...`} />
-            </Form.Item>
-          </div>
-
-          <Form.Item
-            className="mb-0"
-            label={t("email")}
-            name="email"
-            rules={[{ required: true, message: t("validation:requiredField") }]}
-          >
-            <Input variant="filled" placeholder={`${t("email")}...`} />
-          </Form.Item>
-
-          <div className="bg-gray-300 w-full h-[1px] mt-4" />
-
-          <Form.Item
-            className="m-0"
-            label={t("currentPassword")}
-            name="currentPassword"
-            rules={[{ required: true, message: t("validation:requiredField") }]}
-          >
-            <Input.Password variant="filled" placeholder={t("currentPassword")+"..."}/>
-          </Form.Item>
-          
-          <Form.Item
-            className="m-0"
-            label={t("newPassword")}
-            name="password"
-            rules={[{ required: true, message: t("validation:requiredField") }]}
-          >
-            <Input.Password
-              variant="filled"
-              placeholder={t("newPassword")+"..."}
-            />
-          </Form.Item>
-
-          <Form.Item
-            className="m-0"
-            label={t("confirmNewPassword")}
-            name="confirmNewPassword"
-            dependencies={["password"]}
-            rules={[
-              { required: true, message: t("validation:requiredField") },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error(t("validation:passwordMismatch"))
-                  );
-                },
-              }),
-            ]}
-          >
-            <Input.Password
-              variant="filled"
-              placeholder={t("confirmNewPassword")+"..."}
-            />
-          </Form.Item>
-        </Form>
-      </div>
-
-      <div className="bg-white flex items-center">
-        <Button
-          className="md:w-[15%] w-1/4 mt-4 bg-gradient-to-r from-primary/[0.92] to-secondary/[0.92]"
-          type="primary"
-          htmlType="submit"
+      <div className="flex items-center justify-center bg-white rounded-xl">
+        <Form
+          className="py-8 px-4 space-y-4 w-full max-w-screen-md"
+          layout="vertical"
+          form={form}
         >
-          {t("save")}
-        </Button>
+          <div className="flex items-start gap-4 w-full flex-col md:flex-row">
+            <div className="flex items-center justify-center flex-shrink-0 w-64 mx-auto">
+              <Form.Item
+                name="profilePicture"
+                className="mx-auto w-full space-y-4"
+              >
+                <Image
+                  width={160}
+                  height={160}
+                  src={imageUrl}
+                  className="rounded-xl"
+                  rootClassName="mx-auto !block rounded-xl overflow-hidden"
+                  fallback="/profile.png"
+                  preview={false}
+                />
+
+                <Upload
+                  showUploadList={false}
+                  beforeUpload={() => false}
+                  accept="image/png,image/jpeg,image/jpg"
+                  className="flex items-center justify-center !mt-4"
+                  onChange={(info) => {
+                    getBase64(info.file as FileType, (url) => {
+                      setImageUrl(url);
+                    });
+                  }}
+                >
+                  <Button
+                    htmlType="button"
+                    icon={<LuImagePlus size={20} />}
+                    type="dashed"
+                    size="small"
+                    className="!mx-auto !flex"
+                  >
+                    {t("uploadProfilePicture")}
+                  </Button>
+                </Upload>
+              </Form.Item>
+            </div>
+            <div className="space-y-4 flex-1 w-full">
+              <Form.Item
+                className="mb-0"
+                label={t("username")}
+                name="fullName"
+                rules={[{ required: true, message: t("validation:requiredField") }]}
+              >
+                <Input placeholder={`${t("username")}...`} />
+              </Form.Item>
+
+              <Form.Item
+                className="mb-0"
+                label={t("phoneNumber")}
+                name="phoneNumber"
+                rules={[{ required: true, message: t("validation:requiredField") }]}
+              >
+                <Input placeholder={`${t("phoneNumber")}...`} />
+              </Form.Item>
+
+              <Form.Item
+                className="mb-0"
+                label={t("email")}
+                name="email"
+                rules={[{ required: true, message: t("validation:requiredField") }]}
+              >
+                <Input placeholder={`${t("email")}...`} />
+              </Form.Item>
+
+              <div className="bg-gray-300 w-full h-[1px] mt-4" />
+
+              <Form.Item
+                className="m-0"
+                label={t("currentPassword")}
+                name="currentPassword"
+                rules={[{ required: true, message: t("validation:requiredField") }]}
+              >
+                <Input.Password placeholder={t("currentPassword") + "..."} />
+              </Form.Item>
+
+              <Form.Item
+                className="m-0"
+                label={t("newPassword")}
+                name="password"
+                dependencies={["currentPassword"]}
+                rules={[
+                  { required: true, message: t("validation:requiredField") },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("currentPassword") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error(t("validation:passwordShouldNotMatchWithCurrent")),
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password placeholder={t("newPassword") + "..."} />
+              </Form.Item>
+
+              <Form.Item
+                className="m-0"
+                label={t("confirmNewPassword")}
+                name="confirmNewPassword"
+                dependencies={["password"]}
+                rules={[
+                  { required: true, message: t("validation:requiredField") },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("password") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error(t("validation:passwordMismatch")));
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password placeholder={t("confirmNewPassword") + "..."} />
+              </Form.Item>
+              <HrDivider />
+              <Button
+                className="bg-gradient-to-r from-primary/[0.92] to-secondary/[0.92] w-full"
+                type="primary"
+                htmlType="submit"
+              >
+                {t("save")}
+              </Button>
+            </div>
+          </div>
+        </Form>
       </div>
     </div>
   );

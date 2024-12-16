@@ -1,6 +1,5 @@
 import { notification } from "antd";
 import { AxiosError } from "axios";
-import cookies from "./cookies";
 
 type ErrorExceptionProp = AxiosError | any;
 
@@ -22,13 +21,25 @@ export default function errorException(error: ErrorExceptionProp) {
           description: "You should logout first then login again , logging out...",
         });
 
-        cookies.remove("token");
-        cookies.remove("user");
+        // cookies.remove("token");
+        // cookies.remove("user");
 
-        localStorage.clear();
-        sessionStorage.clear();
+        // localStorage.clear();
+        // sessionStorage.clear();
 
         return;
+      case 400: {
+        const notAllowed = error?.response?.data?.find(
+          (err) => err.errorCode == "PERMISSION_AUTHORITY",
+        );
+        if (notAllowed)
+          return notification.error({
+            message: "Permission not allowed",
+            description: "You don't have permission to do this action",
+          });
+
+        return errors;
+      }
 
       default:
         return errors;

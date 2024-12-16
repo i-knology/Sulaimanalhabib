@@ -106,17 +106,16 @@ export default function Projects() {
     <div className="p-2 space-y-4">
       {!projectId && (
         <>
+          <StatusPanel
+            totalCount={data?.data?.totalCount}
+            isFetching={isFetching}
+          />
           <TopBar
             search={handleSearch}
             items={statusItems}
             text={t("addNewProject")}
             openDrawer={toggleDrawer}
             displayItems={toggleDisplayItems}
-          />
-
-          <StatusPanel
-            totalCount={data?.data?.totalCount}
-            isFetching={isFetching}
           />
 
           {displayItems ? (
@@ -151,7 +150,7 @@ export default function Projects() {
           >
             <ProjectForm
               errors={errors}
-              action={(values: ProjectFormValues) => mutation.mutate(values)}
+              action={(values: ProjectFormValues) => mutation.mutateAsync(values)}
             />
           </Drawer>
         </>

@@ -1,64 +1,42 @@
 import useErrors from "@/hooks/useError";
-import { getCommitteesTypes } from "@/services/committees";
 import { getMembers } from "@/services/meetings";
-import { mergeUniqueArrays } from "@/utils/mergeArrays";
+import { getTaskPriority } from "@/services/missions";
 import { useQuery } from "@tanstack/react-query";
-import { Button, DatePicker, Form, Input, Select } from "antd";
-import { useMemo, useRef, useState } from "react";
+import { DatePicker, Form, Input, Select } from "antd";
+import dayjs, { Dayjs } from "dayjs";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AiOutlineCloudUpload } from "react-icons/ai";
 import { IoIosArrowDown } from "react-icons/io";
-import { FileInput } from "../projects/ProjectForm";
-import { renderSelectOptions } from "../ui/RenderSelectOptions";
-import { useSetCommitteeFormValues } from "../committeesConcils/useSetCommitteeFormValues ";
 import { SlCalender } from "react-icons/sl";
-import { Dayjs } from "dayjs";
+import AttachmentUploader from "../ui/AttachmentUploader";
+import CancelIcon from "./CancelIcon";
 import FrequencySelector from "./FrequencySelector";
-import TaskInput from "./TaskInput";
+import PlusIcon from "./PlusIcon";
 
 interface CommitteeFormValues {
   Title: string;
   Description: string;
-  CommitteeManagerId: { value: string };
-  CommitteeDecisionId: { value: string };
-  TypeId: number;
-  IsInternal: boolean;
-  MemberIds: { value: string }[];
+  userId: { value: string };
+  priorityId: { value: string };
+  StartDate: Dayjs;
+  EndDate: Dayjs;
+
+  Messions: { title: string }[];
 }
-interface CommitteeData {
-  description: string;
-  title: string;
-  isInternal: boolean;
-  typeId: number;
-  members: { typeId: number; userInfo: { id: string; name: string } }[];
-}
+
 interface CommitteeFormProps {
   action: (values) => void;
   errors: [{ [key: string]: string }] | string | null;
-  data?: CommitteeData;
+  data?: any;
 }
 
-export default function MissionForm({
-  errors,
-  data,
-  action,
-}: CommitteeFormProps) {
+export default function MissionForm({ errors, action, data }: CommitteeFormProps) {
   const { t, i18n } = useTranslation();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [form] = Form.useForm();
   const [searchKey, setSearchKey] = useState("");
-  const [date, setDate] = useState<Dayjs | undefined>(undefined);
-
-  // const { data: committeeTypesData = [], isFetching } = useQuery({
-  //   queryKey: ["CommitteeTypeLookup"],
-  //   queryFn: async () => {
-  //     const response = await getCommitteesTypes();
-  //     return response?.data?.items?.map((el) => ({
-  //       label: i18n.language === "ar" ? el?.nameAr : el?.nameEn,
-  //       value: el?.id,
-  //     }));
-  //   },
-  // });
+  const [prioritySearch, setPrioritySearch] = useState("");
+  const startDate = Form.useWatch("StartDate", form);
+  const [files, setFiles] = useState<any>();
 
   const { data: members = [], isFetching: isMembersLoading } = useQuery({
     queryKey: ["members", searchKey],
@@ -74,111 +52,227 @@ export default function MissionForm({
       }));
     },
   });
+  const { data: priorities = [], isFetching: isPrioritiesLoading } = useQuery({
+    queryKey: ["missions-priorities", searchKey],
+    queryFn: async () => {
+      const response = await getTaskPriority({
+        PageIndex: 1,
+        PageSize: 8,
+        Name: prioritySearch,
+      });
+      return response?.data?.items?.map((el) => ({
+        label: i18n.language == "ar" ? el?.nameAr : el?.nameEn,
+        value: el?.id,
+      }));
+    },
+  });
 
-  const committeeTypes = useMemo(
-    () => [
-      { label: t("statuses:internal"), value: true },
-      { label: t("statuses:external"), value: false },
-    ],
-    [t]
-  );
-
-  useSetCommitteeFormValues(form, data);
   useErrors(form, errors);
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
-  };
-  const handleAddTask = (newTask) => {
-    console.log('New task added:', newTask);
-  };
-  const handleTasksChange = (tasks) => {
-    console.log('Tasks updated:', tasks);
-  };
+
   const handleFinish = (values: CommitteeFormValues) => {
     const formattedValues = {
       ...values,
-      CommitteeManagerId:
-        typeof values.CommitteeManagerId == "object"
-          ? values.CommitteeManagerId?.value
-          : values.CommitteeManagerId,
-      CommitteeDecisionId:
-        typeof values.CommitteeDecisionId == "object"
-          ? values.CommitteeDecisionId?.value
-          : values.CommitteeDecisionId,
-      MemberIds: values.MemberIds?.map((member) =>
-        typeof member == "object" ? member?.value : member
-      ),
+      userId: typeof values.userId == "object" ? values.userId?.value : values.userId,
+      priorityId:
+        typeof values.priorityId == "object" ? values.priorityId?.value : values.priorityId,
+      id: data?.id,
     };
-    action(formattedValues);
+
+    action({ ...formattedValues, Files: files?.map((e) => e.originFileObj) });
+    form.resetFields([
+      "userId",
+      "Title",
+      "Description",
+      "missions",
+      "priorityId",
+      "StartDate",
+      "EndDate",
+      "Files",
+    ]);
+    setFiles(undefined);
   };
+
+  useEffect(() => {
+    if (data) {
+      form.setFieldsValue({
+        Title: data?.title,
+        Description: data?.title,
+        userId: data?.userInfo && {
+          value: data?.userInfo?.id,
+          label: data?.userInfo?.name,
+        },
+        priorityId: data?.priorityInfo && {
+          label: i18n.language == "ar" ? data?.priorityInfo?.nameAr : data?.priorityInfo?.nameEn,
+          value: data?.priorityInfo?.id,
+        },
+        StartDate: dayjs(data?.startDate),
+        EndDate: dayjs(data?.endDate),
+        Messions: data?.messions?.map((mession) => ({
+          title: mession.title,
+          id: mession.id,
+        })),
+        id: data?.id,
+      });
+    } else {
+      form.resetFields([
+        "userId",
+        "Title",
+        "Description",
+        "missions",
+        "priorityId",
+        "StartDate",
+        "EndDate",
+        "Files",
+      ]);
+      form.setFieldValue("Messions", [{ title: undefined }]);
+    }
+
+    console.log(data);
+  }, [data]);
 
   return (
     <Form
       form={form}
-      id="committee-form"
+      id={data ? "editMission" : "createdMission"}
       className="space-y-4"
       layout="vertical"
       onFinish={handleFinish}
+      initialValues={{
+        Messions: [
+          {
+            title: undefined,
+          },
+        ],
+      }}
     >
-      <TaskInput
-      onTaskChange={handleTasksChange}
-      onAddTask={handleAddTask}
-      />
+      <Form.List name="Messions">
+        {(fields, { add, remove }) => {
+          return (
+            <>
+              {fields.map((field) => (
+                <div
+                  key={field.key}
+                  className="relative"
+                >
+                  <Form.Item
+                    {...field}
+                    label={t("missionTitle")}
+                    name={[field.name, "title"]}
+                    rules={[{ required: true, message: t("validation:requiredField") }]}
+                  >
+                    <Input
+                      placeholder={t("missionTitle")}
+                      suffix={
+                        fields.length > 1 && (
+                          <button
+                            onClick={() => remove(field.name)}
+                            className="text-gray-400 hover:text-gray-600"
+                            type="button"
+                          >
+                            <CancelIcon />
+                          </button>
+                        )
+                      }
+                      className="!pe-2"
+                    />
+                  </Form.Item>
+                </div>
+              ))}
+              <div className="flex justify-end items-center space-x-2">
+                <button
+                  onClick={() => {
+                    add({
+                      title: undefined,
+                    });
+                  }}
+                  className="flex gap-[8px] items-center"
+                  type="button"
+                >
+                  <PlusIcon />
+                  <p className="underline hover:no-underline font-medium text-labelColor">
+                    {t("addNewMission")}
+                  </p>
+                </button>
+              </div>
+            </>
+          );
+        }}
+      </Form.List>
       <hr className="hr border-8 border-[#F8FAFB]" />
-      <Form.Item
-        rules={[{ required: true, message: t("validation:requiredField") }]}
-        className="my-0"
-        name="CommitteeManagerId"
-        label={t("missionResponsibility")}
-      >
-        <Select
-          variant="filled"
-          placeholder={`${t("missionResponsibility")}...`}
-          suffixIcon={<IoIosArrowDown size={20} />}
-          options={renderSelectOptions({
-            isLoading: isMembersLoading,
-            options:
-              typeof data == "object"
-                ? mergeUniqueArrays(
-                  members,
-                  data?.members
-                    ?.filter((el) => el?.typeId == 1)
-                    ?.map((el) => {
-                      return {
-                        label: el?.userInfo?.name,
-                        value: el?.userInfo?.id,
-                      };
-                    })
-                )
-                : members,
-          })}
-          showSearch
-          labelInValue
-          filterOption={false}
-          onSearch={setSearchKey}
-          onChange={() => setSearchKey("")}
-          className="w-full"
-        />
-      </Form.Item>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Form.Item
+          rules={[{ required: true, message: t("validation:requiredField") }]}
+          className="my-0"
+          name="userId"
+          label={t("missionResponsibility")}
+        >
+          <Select
+            placeholder={`${t("missionResponsibility")}...`}
+            suffixIcon={<IoIosArrowDown size={20} />}
+            options={members}
+            showSearch
+            labelInValue
+            loading={isMembersLoading}
+            filterOption={false}
+            onSearch={setSearchKey}
+            onChange={() => setSearchKey("")}
+            className="w-full"
+          />
+        </Form.Item>
+        <Form.Item
+          rules={[{ required: true, message: t("validation:requiredField") }]}
+          className="my-0"
+          name="priorityId"
+          label={t("MissionPriority")}
+        >
+          <Select
+            placeholder={`${t("MissionPriority")}...`}
+            suffixIcon={<IoIosArrowDown size={20} />}
+            options={priorities}
+            showSearch
+            labelInValue
+            loading={isPrioritiesLoading}
+            filterOption={false}
+            onSearch={setPrioritySearch}
+            onChange={() => setPrioritySearch("")}
+            className="w-full"
+          />
+        </Form.Item>
+      </div>
       <Form.Item
         rules={[{ required: true, message: t("validation:requiredField") }]}
         name="Title"
         label={t("projectName")}
       >
-        <Input variant="filled" placeholder={`${t("projectName")}...`} />
+        <Input placeholder={`${t("projectName")}...`} />
       </Form.Item>
       <hr className="hr border-8 border-[#F8FAFB]" />
 
-      <Form.Item name="StartDate" label={t("missionDate")} className="mb-2">
-        <DatePicker
-          onChange={setDate}
-          variant="filled"
-          className="w-full"
-          suffixIcon={<SlCalender size={20} />}
-        />
-      </Form.Item>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Form.Item
+          name="StartDate"
+          label={t("startDate")}
+        >
+          <DatePicker
+            className="w-full"
+            suffixIcon={<SlCalender size={20} />}
+            disabledDate={(date) => date.isBefore(dayjs().clone().add(-1, "months"))}
+          />
+        </Form.Item>
+        <Form.Item
+          name="EndDate"
+          label={t("endDate")}
+        >
+          <DatePicker
+            className="w-full"
+            suffixIcon={<SlCalender size={20} />}
+            disabledDate={(date) => date.isBefore(startDate)}
+          />
+        </Form.Item>
+      </div>
+
       <FrequencySelector
-        onChange={(value) => console.log("FrequencySelector",value)}
+        onChange={(value) => console.log("FrequencySelector", value)}
         defaultValue="daily"
       />
       <hr className="hr border-8 border-[#F8FAFB]" />
@@ -187,27 +281,16 @@ export default function MissionForm({
         name="Description"
         label={t("enterNotesHere")}
       >
-        <Input.TextArea
-          variant="filled"
-          placeholder={`${t("enterNotesHere")}...`}
-        />
-      </Form.Item>
-
-
-
-      <Form.Item name="Files" className="hidden" label={t("addAttachments")}>
-        <FileInput ref={fileInputRef} />
+        <Input.TextArea placeholder={`${t("enterNotesHere")}...`} />
       </Form.Item>
 
       <Form.Item label={t("uploadFile")}>
-        <Button
-          className="border-dashed border-secondary border-2 py-7 w-full bg-gray-100 text-black"
-          onClick={handleButtonClick}
-        >
-          <AiOutlineCloudUpload size={28} />
-          <span className="text-gray-400">{t("dragAndDropFiles")}</span>
-          <span className="text-black">{t("uploadFile")}</span>
-        </Button>
+        <AttachmentUploader
+          multiple
+          onChange={(file) => {
+            setFiles(file.fileList);
+          }}
+        />
       </Form.Item>
     </Form>
   );

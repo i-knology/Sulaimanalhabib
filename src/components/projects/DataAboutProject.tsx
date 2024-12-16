@@ -1,13 +1,11 @@
 import { formatDate } from "@/utils/displayDate";
 import { Divider, List, Typography } from "antd";
 import { useTranslation } from "react-i18next";
-import { PiFileTextDuotone } from "react-icons/pi";
-import { SlCalender } from "react-icons/sl";
 import DisplayIcon from "../ui/DisplayIcon";
-import ProjectStatus from "./ProjectStatus";
 import CalenderIcon from "./CalenderIcon";
-import OrgInfoIcon from "./orgInfoIcon";
 import FileIcon from "./FileIcon";
+import OrgInfoIcon from "./OrgInfoIcon";
+import ProjectStatus from "./ProjectStatus";
 
 interface OrgInfo {
   title: string;
@@ -56,13 +54,11 @@ export default function DataAboutProject({ data }: DataAboutProjectProps) {
         <List>
           <List.Item className="gap-3 !justify-start !p-0">
             <DisplayIcon>
-              <OrgInfoIcon  />
+              <OrgInfoIcon />
             </DisplayIcon>
 
             <div className="flex flex-col gap-1">
-              <Typography className="text-content">
-                {t("departmentName")}
-              </Typography>
+              <Typography className="text-content">{t("departmentName")}</Typography>
               <Typography> {data?.[0]?.orgInfo?.title}</Typography>
             </div>
           </List.Item>
@@ -73,9 +69,7 @@ export default function DataAboutProject({ data }: DataAboutProjectProps) {
                 <CalenderIcon />
               </DisplayIcon>
               <div className="flex flex-col gap-1">
-                <Typography className="text-content">
-                  {t("startsAt")}
-                </Typography>
+                <Typography className="text-content">{t("startsAt")}</Typography>
                 <Typography>
                   {data?.[0]?.startDate
                     ? formatDate(data?.[0]?.startDate, i18n.language)

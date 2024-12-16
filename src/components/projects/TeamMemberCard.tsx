@@ -1,10 +1,10 @@
+import Delete from "@/assets/icons/delete.svg";
 import useResultModal from "@/hooks/useModal";
 import { removeMember } from "@/services/projects";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Image } from "antd";
+import { Button, Image, List, Typography } from "antd";
 import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
-import { RiDeleteBinLine } from "react-icons/ri";
 import { useParams } from "react-router-dom";
 
 export interface Member {
@@ -42,10 +42,8 @@ export default function TeamMemberCard({ member, refetch }: MemberCardProp) {
   };
 
   const mutation = useMutation({
-    mutationFn: (value: {
-      userId: string | undefined;
-      projectId: string | undefined;
-    }) => removeMember(value),
+    mutationFn: (value: { userId: string | undefined; projectId: string | undefined }) =>
+      removeMember(value),
     onSuccess,
     onError,
   });
@@ -60,37 +58,34 @@ export default function TeamMemberCard({ member, refetch }: MemberCardProp) {
   };
 
   return (
-    <div className="my-1 ">
-      <div className="flex items-center justify-between ">
-        <div className="w-full">
-          <div className="flex items-center w-full">
-            <Image
-              width={50}
-              src={member?.userInfo?.profilePictureUrl}
-              className=" rounded-full cursor-pointer"
-              alt=""
-            />
-
-            <div className="mx-2 w-full flex flex-col">
-              <span>{member?.userInfo?.name}</span>
-              <span className="text-[#828282] text-sm font-normal">
-                {i18n.language == "ar"
-                  ? member?.typeLookupInfo?.nameAr
-                  : member?.typeLookupInfo?.nameEn}
-              </span>
-            </div>
-          </div>
+    <List.Item className="border-t border-t-gray-200 first:border-t-0 first:!pt-0 w-full">
+      <div className="flex items-center gap-3 w-full">
+        <Image
+          width={40}
+          height={40}
+          src={member?.userInfo?.profilePictureUrl}
+          fallback="/profile.png"
+          preview={false}
+          className="flex-shrink-0 rounded-full cursor-pointer object-cover"
+          alt={member?.userInfo?.name}
+        />
+        <div className="flex-1">
+          <Typography className="font-medium">{member?.userInfo?.name}</Typography>
+          <Typography.Paragraph className="text-gray-600 !mb-0">
+            {i18n.language == "ar"
+              ? member?.typeLookupInfo?.nameAr
+              : member?.typeLookupInfo?.nameEn}
+          </Typography.Paragraph>
         </div>
-        {/* <Button
-          className="bg-red-50 text-red-700"
+        <Button
+          className="!rounded-lg !bg-red-500/5 text-red-500 !w-10 h-10 !min-w-10"
           onClick={() => {
             handleConfirm();
           }}
-        >
-          <RiDeleteBinLine size={20} />
-        </Button> */}
+          icon={<Delete />}
+          type="primary"
+        />
       </div>
-      <div className="h-[1px] bg-semiGray w-full mt-2" />
-    </div>
+    </List.Item>
   );
 }

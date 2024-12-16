@@ -13,6 +13,8 @@ export default {
         white: "#FFFFFF",
         black: "#000000",
         menu: "#02151F",
+        labelColor: "#003E69",
+        borderColor: "#F8FAFB",
       },
       screens: {
         "lg-md": "996px",

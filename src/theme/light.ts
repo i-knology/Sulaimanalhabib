@@ -5,7 +5,7 @@ const lightTheme: ThemeConfig = {
     colorPrimary: "#22baed",
     colorBgContainer: "#fff",
     colorSplit: "#F2F2F21A",
-    fontFamily: "ReadexPro",
+    fontFamily: "SuisseIntl",
     controlHeight: 50,
     colorPrimaryActive: "#22baed",
   },
@@ -45,8 +45,8 @@ const lightTheme: ThemeConfig = {
       controlHeight: 40,
     },
     Modal: {
-      padding:0,
-      paddingLG:0
+      padding: 0,
+      paddingLG: 0,
     },
   },
 };

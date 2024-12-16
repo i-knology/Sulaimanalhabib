@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: "ReadexPro";
+  font-family: "SuisseIntl";
   font-weight: 400;
   font-style: normal;
   font-variant: normal;
@@ -44,7 +44,7 @@ a {
 } */
 
 .ant-form-item-label {
-  font-weight: 600 !important;
+  font-weight: 500 !important;
   font-size: 16px !important;
 }
 
@@ -63,7 +63,11 @@ a {
 }
 
 .custom-table .ant-table-thead > tr > th {
-  @apply bg-gray-100 first:rounded-s-lg last:rounded-e-lg py-4;
+  @apply bg-gray-100 first:rounded-s-lg last:rounded-e-lg py-4 !font-medium;
+}
+
+.custom-table .ant-table-tbody > tr > td {
+  @apply first:rounded-s-lg last:rounded-e-lg;
 }
 
 .custom-table div {
@@ -135,4 +139,8 @@ a {
 
 .ant-picker-cell-inner {
   @apply !w-8 !h-8 !rounded-full !inline-flex align-middle items-center justify-center;
+}
+
+.ant-input-show-count-suffix {
+  @apply text-xs text-gray-500 font-medium;
 }

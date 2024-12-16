@@ -69,6 +69,10 @@ export default function App() {
             input={{
               autoComplete: "off",
               allowClear: false,
+              className: "rounded-xl",
+            }}
+            button={{
+              className: "rounded-xl",
             }}
           >
             <Routes />

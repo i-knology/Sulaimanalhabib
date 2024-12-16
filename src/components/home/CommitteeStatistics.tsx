@@ -12,21 +12,6 @@ import CardWithHeader from "./StatisticsCard";
 export default function CommitteeStatistics() {
   const { t } = useTranslation();
 
-  const categories = [
-    t("months:january"),
-    t("months:february"),
-    t("months:march"),
-    t("months:april"),
-    t("months:may"),
-    t("months:june"),
-    t("months:july"),
-    t("months:august"),
-    t("months:september"),
-    t("months:october"),
-    t("months:november"),
-    t("months:december"),
-  ];
-
   const { data, isFetching } = useQuery({
     queryKey: ["CommitteeStatistics"],
     queryFn: () =>
@@ -61,8 +46,6 @@ export default function CommitteeStatistics() {
       }),
   });
 
-  const displayedArr = data?.displayedArr || [];
-  const details = data?.details || [];
   const totaly = data?.totaly || 0;
 
   return (
@@ -80,9 +63,7 @@ export default function CommitteeStatistics() {
                   width={40}
                 />
               ) : (
-                <span className="text-primary p-2 rounded-full bg-white mx-2">
-                  {totaly}
-                </span>
+                <span className="text-primary p-2 rounded-full bg-white mx-2">{totaly}</span>
               )}
             </div>
             <Select
@@ -91,9 +72,7 @@ export default function CommitteeStatistics() {
                 label: (
                   <div className="flex items-center">
                     <SlCalender className="text-2xl text-content" />
-                    <span className="mx-1 font-semibold text-content">
-                      {2024}
-                    </span>
+                    <span className="mx-1 font-semibold text-content">{2024}</span>
                   </div>
                 ),
               }}

@@ -39,6 +39,10 @@
     "searchAbout": "البحث عن...",
     "addNewMission": "اضافه مهمة جديدة",
     "allMissions": "كل المهام",
+    "closeProject": "اغلاق المشروع",
+    "cancelProject": "الغاء المشروع",
+    "reactivateProject": "اعادة تشغيل المشروع",
+    "openProject": "اعادة فتح المشروع",
 
     "createdBy": "أنشأت من قبل",
     "missionResponsibility": "مسئول المهمة",
@@ -46,7 +50,7 @@
     "addNewMeeting": "اضافه اجتماع جديد",
     "allMeetings": "كل الاجتماعات",
     "aboutMeeting": "عن الاجتماع",
-    "missions": "مهام",
+    "missions": "المهام",
 
     "meetingDescription": "وصف الاجتماع",
     "meetingDate": "تاريخ الاجتماع",
@@ -282,7 +286,19 @@
 
     "additionalLinks": "روابط اضافية",
     "menu": "القائمة",
-    "changeLanguage": "تغيير اللغة"
+    "changeLanguage": "تغيير اللغة",
+    "missionTitle": "عنوان المهمة",
+    "MissionPriority": "اهمية المهمة",
+    "missionCreator": "انشأت من قبل",
+    "missionDetails": "تفاصيل المهمة",
+    "details": "التفاصيل",
+    "missionComments": "تعليقات المهمة",
+    "missionHistory": "سجل الاجراءات",
+    "reply": "رد",
+    "addComment": "اضافة تعليق",
+    "noData": "لا توجد بيانات",
+    "missionStatus": "الحالة",
+    "uploadProfilePicture": "تحميل صورة الملف الشخصي"
   },
   "validation": {
     "requiredField": "يجب ملئ الحقل",

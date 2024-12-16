@@ -1,54 +1,86 @@
-import { Avatar, Button, Dropdown, Segmented, Tooltip } from "antd";
-import { MenuProps } from "antd/lib";
+import { getMembers } from "@/services/meetings";
+import { useQuery } from "@tanstack/react-query";
+import { Avatar, Button } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { LuPlus, LuSettings2 } from "react-icons/lu";
+import MembersForm from "../missions/MembersForm";
 import SearchBox from "./SearchBox";
 
-export default function MissionTopBar({
-    search,
-    items,
-}: {
-    text?: string;
-    openDrawer?: () => void;
-    displayItems?: (value: boolean) => void;
-    search?: (value: string) => void;
-    items?: MenuProps["items"];
-}) {
-    const { t } = useTranslation();
-    return (
-        <div className="p-2 rounded-md bg-white flex items-center gap-3 justify-between flex-wrap md:flex-nowrap">
+export default function MissionTopBar({ search, onMemberClick, onNew }) {
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
-            <div className="flex items-center gap-[8px]">
-                <h6>{t("missionResponsibility")}</h6>
-                <Avatar.Group
-                    size={'small'}
-                    max={{
-                        count: 2,
-                        style: {
-                            color: "#22baed",
-                            backgroundColor: "#F3F4F6",
-                            cursor: "pointer",
-                        },
-                        popover: { trigger: "click" },
-                    }}
-                >
-                    <Avatar className="bg-[#87d068]" src="https://api.dicebear.com/7.x/miniavs/svg?seed=1"></Avatar>
-                    <Avatar className="bg-[#87d068]">RO</Avatar>
-                    <Avatar className="bg-[#87d068]">MA</Avatar>
-                    <Avatar className="bg-[#87d068]">SH</Avatar>
+  const { data: members = [] } = useQuery({
+    queryKey: ["members"],
+    queryFn: async () => {
+      const response = await getMembers({
+        PageIndex: 1,
+        PageSize: 8,
+      });
+      return response?.data;
+    },
+  });
 
-                </Avatar.Group>
-            </div>
-            {search && (
-                <div className="flex-1 flex-shrink-0 md:max-w-xs">
-                    <SearchBox
-                        onChange={(e) => {
-                            search(e.target.value);
-                        }}
-                        variant="filled"
-                    />
-                </div>
-            )}
+  return (
+    <>
+      <div className="p-2 rounded-md bg-white flex sm:items-center gap-3 flex-col sm:flex-row ">
+        <div className="flex items-center gap-[8px]">
+          <Button
+            icon={<LuSettings2 size={24} />}
+            size="small"
+            type="text"
+            className="text-primary"
+            onClick={() => setIsOpen(true)}
+          />
+          <h6 className="text-sm">{t("missionResponsibility")}</h6>
+          <Avatar.Group
+            size="small"
+            max={{
+              count: 2,
+              style: {
+                color: "#22baed",
+                backgroundColor: "#F3F4F6",
+                cursor: "pointer",
+              },
+              popover: { trigger: "click" },
+            }}
+          >
+            {members.map((member) => (
+              <Avatar
+                src={member.profilePicture}
+                key={member.id}
+                onClick={() => onMemberClick(member.id)}
+                alt={member.name ?? member.email}
+              >
+                {member.name}
+              </Avatar>
+            ))}
+          </Avatar.Group>
         </div>
-    );
+        <span className="flex-1"></span>
+
+        <div className="flex-shrink-0 inline-flex gap-3 w-full sm:w-auto">
+          {search && (
+            <SearchBox
+              onChange={(e) => {
+                search(e.target.value);
+              }}
+            />
+          )}
+          <Button
+            icon={<LuPlus size={24} />}
+            type="primary"
+            className="bg-gradient-to-r from-primary to-secondary !rounded-xl flex-shrink-0"
+            onClick={onNew}
+          />
+        </div>
+      </div>
+      <MembersForm
+        onMemberClick={onMemberClick}
+        isOpen={isOpen}
+        onClose={setIsOpen}
+      />
+    </>
+  );
 }

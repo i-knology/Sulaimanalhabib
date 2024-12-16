@@ -10,7 +10,7 @@ export default function GoogleMap() {
     lat: number;
     lng: number;
   }>({ lat: 37.7749, lng: -122.4194 });
-  const [locationName, setLocationName] = useState<string | null>(null);
+  const [_locationName, _setLocationName] = useState<string | null>(null);
   const [location, setLocation] = useState<{
     lat: number;
     lng: number;
@@ -35,57 +35,6 @@ export default function GoogleMap() {
       const lng = place.geometry.location.lng();
       setLocation({ lat, lng });
     }
-  };
-
-  const getLocationName = (lat: number | undefined, lng: number | undefined) => {
-    if (!lat || !lng) {
-      return 0;
-    }
-    const geocoder = new google.maps.Geocoder();
-
-    // Create a LatLng object
-    const latLng = new google.maps.LatLng(lat, lng);
-
-    geocoder.geocode({ location: latLng }, (results, status) => {
-      if (status === "OK" && results?.[0]) {
-        // Extract address components
-        const addressComponents = results[0].address_components;
-
-        // Filter for the specific address components
-        const streetNumber = addressComponents.find((component) =>
-          component.types.includes("street_number"),
-        )?.long_name;
-        const streetName = addressComponents.find((component) =>
-          component.types.includes("route"),
-        )?.long_name;
-        const neighborhood = addressComponents.find((component) =>
-          component.types.includes("neighborhood"),
-        )?.long_name;
-        const city = addressComponents.find((component) =>
-          component.types.includes("locality"),
-        )?.long_name;
-        const state = addressComponents.find((component) =>
-          component.types.includes("administrative_area_level_1"),
-        )?.long_name;
-        const country = addressComponents.find((component) =>
-          component.types.includes("country"),
-        )?.long_name;
-
-        const detailedAddress = [
-          streetNumber ? streetNumber : "",
-          streetName ? streetName : "",
-          neighborhood ? neighborhood : "",
-          city ? city : "",
-          state ? state : "",
-          country ? country : "",
-        ]
-          .filter(Boolean)
-          .join(", ");
-        setLocationName(detailedAddress);
-      } else {
-        setLocationName("Location not found");
-      }
-    });
   };
 
   function getCurrentLocation() {

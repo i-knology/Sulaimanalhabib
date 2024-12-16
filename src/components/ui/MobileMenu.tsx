@@ -6,7 +6,8 @@ import { BiChevronLeft } from "react-icons/bi";
 import { CiGlobe, CiLogout } from "react-icons/ci";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoCloseOutline } from "react-icons/io5";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import logo from "../../../public/logo.png";
 import HeaderButton from "./HeaderButton";
 import MobileMenuItem from "./MobileMenuItem";
@@ -15,6 +16,7 @@ import { menuItems } from "./SideBar";
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const { user } = useSelector((state: any) => state.auth);
 
   return (
     <>
@@ -59,27 +61,35 @@ export default function MobileMenu() {
         </Flex>
 
         <Divider />
-        <Flex
-          className="p-3 rounded-md border border-white/20 "
-          align="center"
-        >
-          <Image
-            src="/illustrations/profile-image.svg"
-            alt=""
-            width={40}
-            height={40}
-          />
-          <div className="mx-2 text-sm">
-            <p className="text-white">Mohamed</p>
-            <p className="text-gray-400">المنصب</p>
-          </div>
+        <Link to="/profile">
+          <Flex
+            className="p-3 rounded-md border border-white/20 "
+            align="center"
+          >
+            <Image
+              src={user?.imageProfile}
+              alt={user?.fullName}
+              fallback="/profile.png"
+              sizes="small"
+              width={40}
+              height={40}
+              className="w-full rounded-full object-fill"
+              preview={false}
+            />
+            <div className="mx-2 text-sm">
+              <Typography className="text-white">{user?.fullName}</Typography>
+              <Typography.Paragraph className="text-gray-400 !mb-0">
+                {user?.mobileNo}
+              </Typography.Paragraph>
+            </div>
 
-          <span className="flex-1"></span>
-          <BiChevronLeft
-            size={24}
-            className="text-white flex-shrink-0"
-          />
-        </Flex>
+            <span className="flex-1"></span>
+            <BiChevronLeft
+              size={24}
+              className="text-white flex-shrink-0"
+            />
+          </Flex>
+        </Link>
         <Divider />
 
         <Typography className="text-white">{t("menu")}</Typography>

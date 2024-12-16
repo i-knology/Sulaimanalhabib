@@ -1,16 +1,15 @@
 import useErrors from "@/hooks/useError";
 import { getProjectMembers } from "@/services/projects";
 import { useQuery } from "@tanstack/react-query";
-import { Button, DatePicker, Form, Input, Select } from "antd";
+import { DatePicker, Form, Input, Select } from "antd";
 import dayjs from "dayjs";
-import { useRef } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AiOutlineCloudUpload } from "react-icons/ai";
 import { IoIosArrowDown } from "react-icons/io";
 import { SlCalender } from "react-icons/sl";
 import { useParams } from "react-router-dom";
+import AttachmentUploader from "../ui/AttachmentUploader";
 import { renderSelectOptions } from "../ui/RenderSelectOptions";
-import { FileInput } from "./ProjectForm";
 
 export interface MissionFormValues {
   Name: string;
@@ -23,19 +22,16 @@ export interface MissionFormValues {
 }
 
 interface MissionFormProps {
-  action: (values) => void;
+  action: (values) => Promise<void>;
   errors: [{ [key: string]: string }] | string | null;
   members?: { typeId: number; userInfo: { name: string; id: string } }[];
 }
 
-export default function MissionForm({
-  action,
-  errors,
-  members,
-}: MissionFormProps) {
+export default function MissionForm({ action, errors, members }: MissionFormProps) {
   const { t } = useTranslation();
   const [form] = Form.useForm<MissionFormValues>();
   const { projectId } = useParams<{ projectId: string }>();
+  const [files, setFiles] = useState<any>();
 
   const { data: projectMembers = [], isFetching } = useQuery({
     queryKey: ["ProjectMembers", projectId],
@@ -48,11 +44,6 @@ export default function MissionForm({
     },
     enabled: !!projectId,
   });
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleAddImage = () => {
-    fileInputRef.current?.click();
-  };
 
   useErrors(form, errors, "project");
 
@@ -70,20 +61,28 @@ export default function MissionForm({
     const dummyData = {
       ...formattedValues,
       MemberIds: formattedValues.MemberIds.map((el) => el.value),
+      Files: files?.map((e) => e.originFileObj),
     };
 
-    if (typeof members?.[0] == "object") {
-      delete dummyData?.StartDate;
-      delete dummyData?.EndDate;
-      delete dummyData?.ProjectId;
-    }
-    action(dummyData);
+    // if (typeof members?.[0] == "object") {
+    //   delete dummyData?.StartDate;
+    //   delete dummyData?.EndDate;
+    //   delete dummyData?.ProjectId;
+    // }
+    action(dummyData).then(() => {
+      // if (!data) {
+
+      // }
+
+      form.resetFields(["Description", "EndDate", "Files", "MemberIds", "Name", "StartDate"]);
+      setFiles(undefined);
+    });
   };
 
   return (
     <Form
       form={form}
-      id="createProject"
+      id="createProjectMission"
       className="space-y-4"
       layout="vertical"
       onFinish={onSubmit}
@@ -94,7 +93,7 @@ export default function MissionForm({
         className="my-0"
         rules={[{ required: true, message: t("validation:requiredField") }]}
       >
-        <Input variant="filled" placeholder={`${t("name")}...`} />
+        <Input placeholder={`${t("name")}...`} />
       </Form.Item>
 
       <Form.Item
@@ -103,10 +102,7 @@ export default function MissionForm({
         className="mb-0"
         rules={[{ required: true, message: t("validation:requiredField") }]}
       >
-        <Input.TextArea
-          variant="filled"
-          placeholder={`${t("description")}...`}
-        />
+        <Input.TextArea placeholder={`${t("description")}...`} />
       </Form.Item>
 
       {typeof members?.[0] !== "object" && (
@@ -118,7 +114,6 @@ export default function MissionForm({
             rules={[{ required: true, message: t("validation:requiredField") }]}
           >
             <DatePicker
-              variant="filled"
               className="w-full"
               placeholder={t("startsAt")}
               suffixIcon={<SlCalender size={20} />}
@@ -131,7 +126,6 @@ export default function MissionForm({
             rules={[{ required: true, message: t("validation:requiredField") }]}
           >
             <DatePicker
-              variant="filled"
               className="w-full"
               placeholder={t("endDate")}
               suffixIcon={<SlCalender size={20} />}
@@ -147,7 +141,6 @@ export default function MissionForm({
         rules={[{ required: true, message: t("validation:requiredField") }]}
       >
         <Select
-          variant="filled"
           options={renderSelectOptions({
             isLoading: isFetching,
             options:
@@ -167,20 +160,13 @@ export default function MissionForm({
           suffixIcon={<IoIosArrowDown size={20} />}
         />
       </Form.Item>
-
-      <Form.Item name="Files" className="hidden">
-        <FileInput ref={fileInputRef} />
-      </Form.Item>
-
-      <Form.Item className="mb-0" label={t("addAttachments")}>
-        <Button
-          className="border-dashed border-secondary border-2 py-10 w-full bg-semiGray text-black"
-          onClick={handleAddImage}
-        >
-          <AiOutlineCloudUpload size={28} />
-          <span>{t("dragAndDropFiles")}</span>
-          <span>{t("uploadAttachments")}</span>
-        </Button>
+      <Form.Item label={t("uploadFile")}>
+        <AttachmentUploader
+          multiple
+          onChange={(file) => {
+            setFiles(file.fileList);
+          }}
+        />
       </Form.Item>
     </Form>
   );

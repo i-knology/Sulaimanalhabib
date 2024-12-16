@@ -18,8 +18,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "types": ["vite-plugin-svgr/client"]
   },
   "include": ["vite.config.ts"]
 }
-

@@ -1,36 +1,34 @@
+import { Avatar, Typography } from "antd";
+import dayjs from "dayjs";
 import { IoMdTime } from "react-icons/io";
 import HrDivider from "../ui/HrDivider";
 
-export default function NotificationCard() {
+export default function NotificationCard({ toUserInfo, message, notificationDate }: any) {
   return (
     <>
-      <div className="bg-white rounded-lg">
-        <div className="grid grid-cols-1 md:grid-cols-12 mx-2 w-full py-4 px-2">
+      <div className="bg-white rounded-lg p-4 space-y-3">
+        <div className="flex w-full gap-4 items-center">
           <div className="flex items-center gap-2 w-full col-span-8">
-            <img
-              className=""
-              src="/illustrations/profile-image.svg"
-              alt=""
+            <Avatar
+              size="small"
+              src={toUserInfo?.profilePictureUrl}
+              alt={toUserInfo?.name}
             />
             <div className="flex flex-col ">
-              <p>محمد مصطفي علي</p>
-              <p className="text-primary">منصب المستخدم</p>
+              <Typography className="font-medium">{toUserInfo?.name}</Typography>
+              <Typography.Paragraph className="!mb-0">{toUserInfo?.email}</Typography.Paragraph>
             </div>
           </div>
-          <div className="col-span-4 flex justify-end">
-            <p className="flex items-center text-content px-3">
-              <IoMdTime
-                className="mx-1"
-                size={24}
-              />
-              <span>11 سبتمبر 2023 , 02:30 مساء</span>
-            </p>
-          </div>
+          <span className="flex-1"></span>
+          <Typography.Paragraph className="!mb-0 flex-shrink-0 text-sm">
+            <div className="inline-flex gap-2">
+              <IoMdTime size={20} />
+              <span>{dayjs(notificationDate).format("DD MMM YYYY , h:mm A")}</span>
+            </div>
+          </Typography.Paragraph>
         </div>
-        <div>
-          <HrDivider />
-          <p className="px-2 py-3">تفاصيل الاشعار تفاصيل الاشعار تفاصيل الاشعار </p>
-        </div>
+        <HrDivider />
+        <Typography.Paragraph className="">{message}</Typography.Paragraph>
       </div>
     </>
   );

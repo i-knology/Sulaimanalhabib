@@ -1,34 +1,27 @@
 @font-face {
-  font-family: "ReadexPro";
-  src: url("/fonts/ReadexPro-Light.ttf");
+  font-family: "SuisseIntl";
+  src: url("/fonts/SuisseIntl-Light.ttf");
   font-style: normal;
   font-weight: 300;
 }
 
 @font-face {
-  font-family: "ReadexPro";
-  src: url("/fonts/ReadexPro-Regular.ttf");
+  font-family: "SuisseIntl";
+  src: url("/fonts/SuisseIntl-Regular.ttf");
   font-style: normal;
   font-weight: 400;
 }
 
 @font-face {
-  font-family: "ReadexPro";
-  src: url("/fonts/ReadexPro-Medium.ttf");
+  font-family: "SuisseIntl";
+  src: url("/fonts/SuisseIntl-Medium.ttf");
   font-style: normal;
   font-weight: 500;
 }
 
 @font-face {
-  font-family: "ReadexPro";
-  src: url("/fonts/ReadexPro-SemiBold.ttf");
-  font-style: normal;
-  font-weight: 600;
-}
-
-@font-face {
-  font-family: "ReadexPro";
-  src: url("/fonts/ReadexPro-Bold.ttf");
+  font-family: "SuisseIntl";
+  src: url("/fonts/SuisseIntl-Bold.ttf");
   font-style: normal;
   font-weight: 700;
 }

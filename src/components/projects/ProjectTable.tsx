@@ -1,33 +1,28 @@
 import type { TableProps } from "antd";
-import { Table, Typography } from "antd";
+import { Table, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { Project } from "./ProjectsCard";
-import ProjectStatus from "./ProjectStatus";
 
 interface ProjectTableeProps {
   data: Project[];
   totalCount: number;
-  dispatch: (action: {
-    type: "paginate";
-    payload: { current: number; pageSize: number };
-  }) => void;
+  dispatch: (action: { type: "paginate"; payload: { current: number; pageSize: number } }) => void;
   isFetching?: boolean;
 }
 
-const ProjectTable: React.FC<ProjectTableeProps> = ({
-  data,
-  totalCount,
-  dispatch,
-  isFetching,
-}) => {
+const ProjectTable: React.FC<ProjectTableeProps> = ({ data, totalCount, dispatch, isFetching }) => {
   const { t, i18n } = useTranslation();
   const columns: TableProps["columns"] = [
     {
       title: t("projectName"),
       dataIndex: "projectName",
       key: "projectName",
+      render: (value, record) => {
+        return <Link to={`/projects/${record.id}`}>{value}</Link>;
+      },
     },
     {
       title: t("departmentName"),
@@ -39,9 +34,7 @@ const ProjectTable: React.FC<ProjectTableeProps> = ({
       dataIndex: "startDate",
       key: "startDate",
       render: (value) => {
-        return value
-          ? dayjs(value).locale(i18n.language).format("YYYY-MMMM-DD")
-          : "-";
+        return value ? dayjs(value).locale(i18n.language).format("YYYY-MMMM-DD") : "-";
       },
     },
     {
@@ -49,9 +42,7 @@ const ProjectTable: React.FC<ProjectTableeProps> = ({
       key: "endDate",
       dataIndex: "endDate",
       render: (value) => {
-        return value
-          ? dayjs(value).locale(i18n.language).format("YYYY-MMMM-DD")
-          : "-";
+        return value ? dayjs(value).locale(i18n.language).format("YYYY-MMMM-DD") : "-";
       },
     },
     {
@@ -72,11 +63,12 @@ const ProjectTable: React.FC<ProjectTableeProps> = ({
     },
     {
       title: t("projectStatus"),
-      dataIndex: "statusInfo",
+      dataIndex: ["statusInfo", "nameAr"],
       key: "statusInfo",
-      render: (value) => {
-        return <ProjectStatus id={value?.id} />;
-      },
+      render: (value) => <Tag>{value}</Tag>,
+      // render: (value) => {
+      // return <ProjectStatus id={value?.id} />;
+      // },
     },
   ];
   return (
