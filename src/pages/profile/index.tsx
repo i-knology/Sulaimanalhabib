@@ -1,6 +1,9 @@
 import HrDivider from "@/components/ui/HrDivider";
+import instance from "@/utils/instance";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type { GetProp, UploadProps } from "antd";
 import { Button, Form, Image, Input, Upload } from "antd";
+import { serialize } from "object-to-formdata";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LuImagePlus } from "react-icons/lu";
@@ -11,25 +14,40 @@ type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 export default function Profile() {
   const { t } = useTranslation();
   const { user } = useSelector((state: any) => state.auth);
+  console.log(user);
   const [form] = Form.useForm();
 
   const [imageUrl, setImageUrl] = useState<string>();
 
   useEffect(() => {
     form.setFieldsValue({
-      email: user?.email,
-      username: user.username,
-      fullName: user.fullName,
-      phoneNumber: user.mobileNo,
+      Email: user?.email,
+      FullName: user.fullName,
+      PhoneNumber: user.mobileNo,
     });
-  }, []);
+  }, [user]);
 
   const getBase64 = (img: FileType, callback: (url: string) => void) => {
-    console.log(img);
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result as string));
     reader.readAsDataURL(img);
   };
+
+  const { refetch } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => instance.get("Users/UserDashBoard"),
+  });
+
+  const muatation = useMutation({
+    mutationFn: (values) => {
+      console.log(values);
+      return instance.post("Users/UserChangeInfo", serialize(values), {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    },
+  });
 
   return (
     <div className="p-2 space-y-2">
@@ -38,17 +56,21 @@ export default function Profile() {
           className="py-8 px-4 space-y-4 w-full max-w-screen-md"
           layout="vertical"
           form={form}
+          id="profile-update-form"
+          onFinish={muatation.mutate}
         >
           <div className="flex items-start gap-4 w-full flex-col md:flex-row">
             <div className="flex items-center justify-center flex-shrink-0 w-64 mx-auto">
               <Form.Item
-                name="profilePicture"
+                name="ProfilePicture"
                 className="mx-auto w-full space-y-4"
               >
                 <Image
                   width={160}
                   height={160}
-                  src={imageUrl}
+                  src={imageUrl ?? user?.imageProfile}
+                  data-src={imageUrl ?? user?.imageProfile}
+                  crossOrigin="anonymous"
                   className="rounded-xl"
                   rootClassName="mx-auto !block rounded-xl overflow-hidden"
                   fallback="/profile.png"
@@ -63,6 +85,7 @@ export default function Profile() {
                   onChange={(info) => {
                     getBase64(info.file as FileType, (url) => {
                       setImageUrl(url);
+                      form.setFieldValue("ProfilePicture", info.file);
                     });
                   }}
                 >
@@ -82,7 +105,7 @@ export default function Profile() {
               <Form.Item
                 className="mb-0"
                 label={t("username")}
-                name="fullName"
+                name="FullName"
                 rules={[{ required: true, message: t("validation:requiredField") }]}
               >
                 <Input placeholder={`${t("username")}...`} />
@@ -91,7 +114,7 @@ export default function Profile() {
               <Form.Item
                 className="mb-0"
                 label={t("phoneNumber")}
-                name="phoneNumber"
+                name="PhoneNumber"
                 rules={[{ required: true, message: t("validation:requiredField") }]}
               >
                 <Input placeholder={`${t("phoneNumber")}...`} />
@@ -100,7 +123,7 @@ export default function Profile() {
               <Form.Item
                 className="mb-0"
                 label={t("email")}
-                name="email"
+                name="Email"
                 rules={[{ required: true, message: t("validation:requiredField") }]}
               >
                 <Input placeholder={`${t("email")}...`} />
@@ -111,8 +134,8 @@ export default function Profile() {
               <Form.Item
                 className="m-0"
                 label={t("currentPassword")}
-                name="currentPassword"
-                rules={[{ required: true, message: t("validation:requiredField") }]}
+                name="CurrentPassword"
+                // rules={[{ required: true, message: t("validation:requiredField") }]}
               >
                 <Input.Password placeholder={t("currentPassword") + "..."} />
               </Form.Item>
@@ -120,13 +143,13 @@ export default function Profile() {
               <Form.Item
                 className="m-0"
                 label={t("newPassword")}
-                name="password"
+                name="Password"
                 dependencies={["currentPassword"]}
                 rules={[
-                  { required: true, message: t("validation:requiredField") },
+                  // { required: true, message: t("validation:requiredField") },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
-                      if (!value || getFieldValue("currentPassword") === value) {
+                      if (!value || getFieldValue("CurrentPassword") === value) {
                         return Promise.resolve();
                       }
                       return Promise.reject(
@@ -142,13 +165,13 @@ export default function Profile() {
               <Form.Item
                 className="m-0"
                 label={t("confirmNewPassword")}
-                name="confirmNewPassword"
-                dependencies={["password"]}
+                name="ConfirmPassword"
+                dependencies={["Password"]}
                 rules={[
-                  { required: true, message: t("validation:requiredField") },
+                  // { required: true, message: t("validation:requiredField") },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
-                      if (!value || getFieldValue("password") === value) {
+                      if (!value || getFieldValue("Password") === value) {
                         return Promise.resolve();
                       }
                       return Promise.reject(new Error(t("validation:passwordMismatch")));
@@ -163,6 +186,9 @@ export default function Profile() {
                 className="bg-gradient-to-r from-primary/[0.92] to-secondary/[0.92] w-full"
                 type="primary"
                 htmlType="submit"
+                form="profile-update-form"
+                loading={muatation.isPending}
+                disabled={muatation.isPending}
               >
                 {t("save")}
               </Button>
