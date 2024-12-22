@@ -38,7 +38,9 @@ export default function MissionForm({ errors, action, data }: CommitteeFormProps
   const [projectsSearchKey, setProjectSearchKey] = useState("");
   const [prioritySearch, setPrioritySearch] = useState("");
   const startDate = Form.useWatch("StartDate", form);
+  const projectId = Form.useWatch("projectId", form);
   const [files, setFiles] = useState<any>();
+  const [allMembers, setAllMembers] = useState([]);
 
   const { data: projects = [], isFetching: isProjectsFetching } = useQuery({
     queryKey: ["projects", searchKey],
@@ -51,12 +53,14 @@ export default function MissionForm({ errors, action, data }: CommitteeFormProps
       return response?.data?.items?.map((el) => ({
         label: el?.projectName,
         value: el?.id,
+        members: el.members ?? [],
       }));
     },
   });
 
   const { data: members = [], isFetching: isMembersLoading } = useQuery({
     queryKey: ["members", searchKey],
+
     queryFn: async () => {
       const response = await getMembers({
         PageIndex: 1,
@@ -69,6 +73,22 @@ export default function MissionForm({ errors, action, data }: CommitteeFormProps
       }));
     },
   });
+
+  useEffect(() => {
+    if (projectId) {
+      setAllMembers(
+        projects
+          .find((e) => e.value == projectId?.value)
+          ?.members?.map((e) => ({
+            label: e?.userInfo?.name,
+            value: e?.userId,
+          })),
+      );
+    } else {
+      setAllMembers(members);
+    }
+  }, [members, projectId]);
+
   const { data: priorities = [], isFetching: isPrioritiesLoading } = useQuery({
     queryKey: ["missions-priorities", searchKey],
     queryFn: async () => {
@@ -242,6 +262,9 @@ export default function MissionForm({ errors, action, data }: CommitteeFormProps
           filterOption={false}
           onSearch={setProjectSearchKey}
           onChange={() => setProjectSearchKey("")}
+          onSelect={() => {
+            form.resetFields(["userId"]);
+          }}
           className="w-full"
         />
       </Form.Item>
@@ -255,13 +278,14 @@ export default function MissionForm({ errors, action, data }: CommitteeFormProps
           <Select
             placeholder={`${t("missionResponsibility")}...`}
             suffixIcon={<IoIosArrowDown size={20} />}
-            options={members}
+            options={allMembers}
             showSearch
             labelInValue
             loading={isMembersLoading}
-            filterOption={false}
-            onSearch={setSearchKey}
-            onChange={() => setSearchKey("")}
+            filterOption={projectId ? true : false}
+            optionFilterProp="label"
+            onSearch={(value) => (projectId ? undefined : setSearchKey(value))}
+            // onChange={() => setSearchKey("")}
             className="w-full"
           />
         </Form.Item>

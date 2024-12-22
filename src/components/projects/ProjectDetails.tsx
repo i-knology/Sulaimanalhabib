@@ -27,13 +27,14 @@ import MembersForm from "./MembersForm";
 import MissionForm from "./MissionForm";
 import ProjectContentCard from "./ProjectContentCard";
 import ProjectForm, { ProjectFormValues } from "./ProjectForm";
+import ProjectsMissions from "./ProjectsMissions";
 import ProjectStatistic from "./ProjectStatistic";
 import TeamMemberCard from "./TeamMemberCard";
 
 export default function ProjectDetails() {
   const { projectId } = useParams();
   const { t } = useTranslation();
-  const [selectedTab, setSelectedTab] = useState("attachments");
+  const [selectedTab, setSelectedTab] = useState("tasks");
 
   // const queryClient = useQueryClient();
   const globalModal = useResultModal();
@@ -164,19 +165,6 @@ export default function ProjectDetails() {
           <Dropdown
             menu={{
               items: [
-                // {
-                //   label: t("edit"),
-                //   key: 0,
-                //   className: "!p-3",
-                //   onClick: () => setIsOpen(true),
-                // },
-                {
-                  label: t("addNewMission"),
-                  key: 1,
-                  className: "!p-3",
-                  onClick: () => setIsNewTaskOpen(true),
-                },
-
                 {
                   label: t("delete"),
                   key: 2,
@@ -278,7 +266,7 @@ export default function ProjectDetails() {
             {(() => {
               switch (selectedTab) {
                 case "tasks":
-                  break;
+                  return <ProjectsMissions />;
                 case "attachments":
                   return <ProjectAttachments attachments={project?.documents ?? []} />;
 

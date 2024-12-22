@@ -234,6 +234,7 @@ function MissionHistory({ missionId }) {
   const [page, setPage] = useState(1);
   const { data, isFetching } = useQuery({
     queryKey: ["missions-history", missionId],
+    enabled: !!missionId,
     queryFn: () =>
       getMissionHistory(missionId, {
         PageSize: 6,
@@ -244,8 +245,6 @@ function MissionHistory({ missionId }) {
         return res;
       }),
   });
-
-  console.log(data);
 
   return (
     <List
