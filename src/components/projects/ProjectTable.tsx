@@ -65,16 +65,13 @@ const ProjectTable: React.FC<ProjectTableeProps> = ({ data, totalCount, dispatch
       title: t("projectStatus"),
       dataIndex: ["statusInfo", "nameAr"],
       key: "statusInfo",
-      render: (value) => <Tag>{value}</Tag>,
-      // render: (value) => {
-      // return <ProjectStatus id={value?.id} />;
-      // },
+      render: (value) => <Tag className="px-3 py-1.5 rounded-lg font-medium">{value}</Tag>,
     },
   ];
   return (
-    <div className="bg-white p-2">
+    <div className="bg-white p-3 rounded-xl">
       <Table
-        className="mt-2 whitespace-nowrap custom-table"
+        className="whitespace-nowrap custom-table"
         scroll={{ x: "100%" }}
         columns={columns}
         dataSource={data}

@@ -125,7 +125,7 @@ export default function Missions() {
         >
           <MissionForm
             errors={errors}
-            action={(values: ProjectFormValues) => mutation.mutate(values)}
+            action={(values: ProjectFormValues) => mutation.mutateAsync(values)}
             data={mission}
           />
         </Drawer>

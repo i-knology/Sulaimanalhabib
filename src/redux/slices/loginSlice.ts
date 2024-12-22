@@ -22,9 +22,7 @@ interface InitialState {
 const cookies = new Cookies();
 
 const initialState: InitialState = {
-  user: localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user") as string)
-    : null,
+  user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") as string) : null,
   token: cookies.get("token") || null,
 };
 
@@ -48,13 +46,15 @@ const userSlice = createSlice({
 
       state.user = user;
       state.token = action.payload.token;
-      cookies.set("user", JSON.stringify(user));
+      // cookies.set("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(user));
       cookies.set("token", action.payload.token, { path: "/" });
     },
 
     logout: (state) => {
       state.user = null;
       state.token = null;
+      localStorage.clear();
       cookies.remove("user");
       cookies.remove("token", { path: "/" });
       cookies.remove("busOrders", { path: "/" });

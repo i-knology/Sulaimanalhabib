@@ -37,6 +37,7 @@ export default function MembersForm({ onMemberClick, isOpen, onClose }) {
       onClose={() => {
         setSearch(undefined);
         form.resetFields(["userId"]);
+        onClose(false);
       }}
       placement="left"
       footer={

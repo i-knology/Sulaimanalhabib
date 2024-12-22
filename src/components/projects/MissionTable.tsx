@@ -1,12 +1,10 @@
 import type { TableProps } from "antd";
-import { Avatar, Button, Table, Tooltip, Typography } from "antd";
+import { Avatar, Button, Table, Tag, Tooltip, Typography } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LuEye, LuFileEdit } from "react-icons/lu";
 import MissionDetails from "../missions/MissionDetails";
-import MissionImportanceStatus from "./MissionImportanceStatus";
-import ProjectStatus from "./ProjectStatus";
 
 const MissionTable = ({ data, totalCount, dispatch, isFetching, onEdit }) => {
   const { t, i18n } = useTranslation();
@@ -19,7 +17,7 @@ const MissionTable = ({ data, totalCount, dispatch, isFetching, onEdit }) => {
     //   key: "title",
     // },
     {
-      title: t("project"),
+      title: t("projectName"),
       dataIndex: "title",
       key: "title",
     },
@@ -75,19 +73,15 @@ const MissionTable = ({ data, totalCount, dispatch, isFetching, onEdit }) => {
     },
     {
       title: t("missionImportance"),
-      dataIndex: ["priorityInfo"],
-      key: "statusInfo",
-      render: (value) => {
-        return <MissionImportanceStatus id={value?.id} />;
-      },
+      dataIndex: ["priorityInfo", "nameAr"],
+      key: "priorityInfo",
+      render: (value) => <Tag className="px-3 py-1.5 rounded-lg font-medium">{value}</Tag>,
     },
     {
       title: t("status"),
-      dataIndex: "statusInfo",
+      dataIndex: ["statusInfo", "nameAr"],
       key: "statusInfo",
-      render: (value) => {
-        return <ProjectStatus id={value?.id} />;
-      },
+      render: (value) => <Tag className="px-3 py-1.5 rounded-lg font-medium">{value}</Tag>,
     },
     {
       title: t("startDate"),

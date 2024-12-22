@@ -35,7 +35,6 @@ export default function App() {
   useEffect(() => {
     changeLanguage();
     changeDayJsLocale();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n.language]);
 
   function changeLanguage() {
@@ -72,6 +71,15 @@ export default function App() {
               className: "rounded-xl",
             }}
             button={{
+              className: "rounded-xl",
+            }}
+            datePicker={{
+              className: "rounded-xl",
+            }}
+            select={{
+              className: "rounded-xl",
+            }}
+            timePicker={{
               className: "rounded-xl",
             }}
           >

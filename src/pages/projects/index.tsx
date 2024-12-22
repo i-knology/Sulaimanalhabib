@@ -109,10 +109,18 @@ export default function Projects() {
           <StatusPanel
             totalCount={data?.data?.totalCount}
             isFetching={isFetching}
+            completedCount={data?.data?.completedCount}
+            uncompletedCount={data?.data?.canceledCount}
+            ongoingCount={
+              (data?.data?.notStartedCount || 0) +
+              (data?.data?.pendingCount || 0) +
+              (data?.data?.lateCount || 0)
+            }
+            disabled={isFetching}
           />
           <TopBar
             search={handleSearch}
-            items={statusItems}
+            // items={statusItems}
             text={t("addNewProject")}
             openDrawer={toggleDrawer}
             displayItems={toggleDisplayItems}

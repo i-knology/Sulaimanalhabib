@@ -48,6 +48,14 @@ async function getMissionStatus(params: any) {
   });
 }
 
+async function getMissionHistory(id: any, params) {
+  return instance.get("Task/HistoryById/" + id, { params }).then((res) => {
+    return {
+      data: res.data?.data || [],
+    };
+  });
+}
+
 async function updateMessionStatus(params: any) {
   return instance.put("TaskMession/ChangeStatus/" + params.id + "/" + params.status).then((res) => {
     return {
@@ -98,6 +106,7 @@ export {
   editTaskMession,
   getAllMissions,
   getMissionComments,
+  getMissionHistory,
   getMissionStatus,
   getTaskMissions,
   getTaskPriority,

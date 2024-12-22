@@ -9,6 +9,7 @@ export default function StatusPanel({
   completedCount = 0,
   uncompletedCount = 0,
   ongoingCount = 0,
+  disabled,
 }) {
   const { t } = useTranslation();
   return (
@@ -25,6 +26,8 @@ export default function StatusPanel({
               bgColor="bg-[#2BB900]"
               count={completedCount}
               text={t("statuses:completed")}
+              disabled={disabled}
+              loading={disabled}
             />
           </li>
           <li>
@@ -32,6 +35,8 @@ export default function StatusPanel({
               bgColor="bg-[#E88A0A]"
               count={ongoingCount}
               text={t("statuses:ongoing")}
+              disabled={disabled}
+              loading={disabled}
             />
           </li>
           <li>
@@ -39,6 +44,8 @@ export default function StatusPanel({
               bgColor="bg-[#D10008]"
               count={uncompletedCount}
               text={t("statuses:incomplete")}
+              disabled={disabled}
+              loading={disabled}
             />
           </li>
         </ul>

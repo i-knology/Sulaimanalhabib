@@ -1,34 +1,33 @@
-import Calendar from "@/assets/icons/calendar.svg";
-import Download from "@/assets/icons/download.svg";
-import Edit from "@/assets/icons/edit.svg";
-import File from "@/assets/icons/file.svg";
-import FileSecure from "@/assets/icons/fileSecure.svg";
+import Edit from "@/assets/icons/edit.svg?react";
 import useResultModal from "@/hooks/useModal";
 import {
+  addDocuments,
+  addMembers,
   cancelProject,
   closeProject,
   createProjectTask,
   deleteProject,
   getAllProjects,
-  getProjectStatuses,
   updateProject,
   updateProjectStatus,
 } from "@/services/projects";
 import errorException from "@/utils/errorException";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Drawer, Dropdown, List, Segmented, Select, Typography } from "antd";
+import { Button, Drawer, Dropdown, List, Segmented } from "antd";
 import { AxiosError } from "axios";
-import dayjs from "dayjs";
-import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import FormBtn from "../ui/FormBtn";
-import HrDivider from "../ui/HrDivider";
+import AttachmentCard from "./AttachmentCard";
+import AttachmentForm from "./AttachmentForm";
+import MembersForm from "./MembersForm";
 import MissionForm from "./MissionForm";
+import ProjectContentCard from "./ProjectContentCard";
 import ProjectForm, { ProjectFormValues } from "./ProjectForm";
+import ProjectStatistic from "./ProjectStatistic";
 import TeamMemberCard from "./TeamMemberCard";
 
 export default function ProjectDetails() {
@@ -43,6 +42,8 @@ export default function ProjectDetails() {
   const [errors, setErrors] = useState<[{ [key: string]: string }] | string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isNewTaskOpen, setIsNewTaskOpen] = useState(false);
+  const [isNewAttachment, setIsNewAttachment] = useState(false);
+  const [isNewMember, setIsNewMember] = useState(false);
 
   const { data, refetch } = useQuery({
     queryKey: ["details", projectId],
@@ -57,8 +58,12 @@ export default function ProjectDetails() {
   const toggleDrawer = () => setIsOpen((prev) => !prev);
 
   const handleSuccess = () => {
-    toggleDrawer();
+    setIsOpen(false);
+    setIsNewAttachment(false);
+    setIsNewTaskOpen(false);
+    setIsNewMember(false);
     setErrors(null);
+    refetch();
     globalModal.success({ title: t("createdSuccessfully"), subtitle: "" });
   };
 
@@ -75,6 +80,26 @@ export default function ProjectDetails() {
   // Mutation for updating a project
   const missionMutation = useMutation({
     mutationFn: (values: any) => createProjectTask(values),
+    onSuccess: handleSuccess,
+    onError: handleError,
+  });
+  // Mutation for updating a project
+  const attachmentMutation = useMutation({
+    mutationFn: (values: any) =>
+      addDocuments({
+        ...values,
+        id: projectId,
+      }),
+    onSuccess: handleSuccess,
+    onError: handleError,
+  });
+  // Mutation for updating a project
+  const membersMutation = useMutation({
+    mutationFn: (values: any) =>
+      addMembers({
+        ...values,
+        id: projectId,
+      }),
     onSuccess: handleSuccess,
     onError: handleError,
   });
@@ -151,6 +176,7 @@ export default function ProjectDetails() {
                   className: "!p-3",
                   onClick: () => setIsNewTaskOpen(true),
                 },
+
                 {
                   label: t("delete"),
                   key: 2,
@@ -169,13 +195,25 @@ export default function ProjectDetails() {
                 },
                 {
                   label: project?.statusId == 4 ? t("reactivateProject") : t("cancelProject"),
-                  key: 4,
+                  key: 5,
                   className: "!p-3",
                   onClick: () => {
                     if (project?.statusId == 4)
                       updateStatusMutation.mutate({ id: projectId, statusId: 2 } as any);
                     else cancellationMutation.mutate();
                   },
+                },
+                {
+                  label: t("addNewMember"),
+                  key: 6,
+                  className: "!p-3",
+                  onClick: () => setIsNewTaskOpen(true),
+                },
+                {
+                  label: t("addNewAttachment"),
+                  key: 7,
+                  className: "!p-3",
+                  onClick: () => setIsNewAttachment(true),
                 },
               ],
             }}
@@ -198,6 +236,17 @@ export default function ProjectDetails() {
               updateStatusMutation.mutate({ id: projectId, statusId: status?.value } as any)
             }
           />
+          <div className="p-4 rounded-xl bg-white space-y-4">
+            <ProjectStatistic
+              series={[
+                (data?.data?.notStartedCount || 0) +
+                  (data?.data?.pendingCount || 0) +
+                  (data?.data?.lateCount || 0),
+                data?.data?.completedCount ?? 0,
+                data?.data?.canceledCount ?? 0,
+              ]}
+            />
+          </div>
         </div>
         <div className="flex-1 w-full space-y-4">
           <div className="p-4 rounded-xl bg-white space-y-4">
@@ -283,102 +332,42 @@ export default function ProjectDetails() {
           // data={project}
         />
       </Drawer>
-    </div>
-  );
-}
-
-function ProjectContentCard({
-  projectName,
-  startDate,
-  endDate,
-  orgInfo,
-  statusInfo,
-  description,
-  onStatusChange,
-}) {
-  const { i18n } = useTranslation();
-  const { data } = useQuery({
-    queryFn: () => getProjectStatuses(),
-    queryKey: ["projects-status-lookup"],
-  });
-
-  const [selectedStatus, setSelectedStatus] = useState();
-
-  useEffect(() => {
-    setSelectedStatus(
-      statusInfo && {
-        value: statusInfo?.id,
-        label: statusInfo?.[i18n.language == "ar" ? "nameAr" : "nameEn"],
-      },
-    );
-  }, [statusInfo]);
-
-  return (
-    <div className="p-4 rounded-xl bg-white space-y-4">
-      <div className="flex gap-3 items-center">
-        <span className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary flex-shrink-0">
-          <File />
-        </span>
-        <div className="flex-1">
-          <Typography.Paragraph className="font-medium text-sm !mb-0 ">
-            {projectName}
-          </Typography.Paragraph>
-        </div>
-        {/* <ProjectStatus id={statusId} /> */}
-        <Select
-          size="small"
-          variant="filled"
-          className="!w-28 flex-shrink-0"
-          defaultValue={selectedStatus}
-          labelInValue
-          options={data?.data?.items?.map((status) => ({
-            label: status?.[i18n.language == "ar" ? "nameAr" : "nameEn"],
-            value: status?.id,
-          }))}
-          onChange={(value) => {
-            onStatusChange(value);
-            setSelectedStatus(value);
-          }}
-          placeholder={t("status")}
-        />
-      </div>
-      <Typography.Paragraph className="!mb-0 text-slate-700">{description}</Typography.Paragraph>
-      <HrDivider />
-      <div className="grid grid-cols-2 gap-4">
-        <span className="col-span-2">
-          <ProjectItem
-            icon={<FileSecure />}
-            title={t("departmentName")}
-            content={orgInfo?.title}
+      <Drawer
+        onClose={() => setIsNewAttachment(false)}
+        footer={
+          <FormBtn
+            form="addNewAttachment"
+            text={t("addNewAttachment")}
+            loading={attachmentMutation.isPending}
           />
-        </span>
-        <ProjectItem
-          icon={<Calendar />}
-          title={t("startDate")}
-          content={startDate ? dayjs(startDate)?.format("DD MMMM YYYY") : t("notAvailable")}
+        }
+        open={isNewAttachment}
+        placement="left"
+        title={t("addNewAttachment")}
+      >
+        <AttachmentForm
+          errors={errors}
+          action={(values: any) => attachmentMutation.mutateAsync(values)}
         />
-        <ProjectItem
-          icon={<Calendar />}
-          title={t("endDate")}
-          content={endDate ? dayjs(endDate)?.format("DD MMMM YYYY") : t("notAvailable")}
+      </Drawer>
+      <Drawer
+        onClose={() => setIsNewMember(false)}
+        footer={
+          <FormBtn
+            form="addNewMember"
+            text={t("addNewMember")}
+            loading={membersMutation.isPending}
+          />
+        }
+        open={isNewMember}
+        placement="left"
+        title={t("addNewMember")}
+      >
+        <MembersForm
+          errors={errors}
+          action={(values: any) => membersMutation.mutateAsync(values)}
         />
-      </div>
-    </div>
-  );
-}
-
-function ProjectItem({ title, content, icon }) {
-  return (
-    <div className="inline-flex items-center gap-3">
-      <span className="flex items-center justify-center w-10 h-10 rounded-full bg-lightGray text-gray-500 flex-shrink-0">
-        {icon}
-      </span>
-      <div className="flex-1">
-        <Typography.Paragraph className="text-slate-700 text-sm !mb-1">
-          {title}
-        </Typography.Paragraph>
-        <Typography className="!mb-0 font-medium">{content}</Typography>
-      </div>
+      </Drawer>
     </div>
   );
 }
@@ -398,39 +387,21 @@ function ProjectMembers({ members }) {
 }
 
 function ProjectAttachments({ attachments }) {
+  const [items, setItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    setItems(attachments);
+  }, [attachments]);
+
   return (
     <List
-      dataSource={attachments}
+      dataSource={items}
       renderItem={(item: any) => {
         return (
-          <List.Item className="border-t border-t-gray-200 first:border-t-0 first:!pt-0">
-            <div className="flex items-center gap-3 w-full">
-              <div className="w-10 h-10 flex-shrink-0 inline-flex items-center justify-center bg-lightGray rounded-lg">
-                <File />
-              </div>
-              <div className="flex-1">
-                <Typography className="font-medium">{item.title}</Typography>
-                <Typography.Paragraph className="text-gray-600 !mb-0">
-                  {dayjs(item.modifiedDate).format("DD MMMM YYYY h:mmA")}
-                </Typography.Paragraph>
-              </div>
-              <div className="inline-flex gap-2">
-                <Button
-                  type="link"
-                  href={item.documentUrl}
-                  download={item.title}
-                  icon={<Download />}
-                  className="!rounded-lg !w-10 h-10 !min-w-10"
-                />
-                {/* delete attachment is missing ENDPOINT */}
-                {/* <Button
-                  type="primary"
-                  icon={<Delete />}
-                  className="!rounded-lg !bg-red-500/5 text-red-500 !w-10 h-10 !min-w-10"
-                /> */}
-              </div>
-            </div>
-          </List.Item>
+          <AttachmentCard
+            document={item}
+            refetch={() => setItems((prev) => prev.filter((e) => e.id !== item.id))}
+          />
         );
       }}
     />

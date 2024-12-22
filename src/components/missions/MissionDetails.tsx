@@ -1,13 +1,14 @@
-import Calendar from "@/assets/icons/calendar.svg";
-import Clipboard from "@/assets/icons/clipboard.svg";
-import Folder from "@/assets/icons/folder.svg";
-import UserEdit from "@/assets/icons/userEdit.svg";
-import Users from "@/assets/icons/users.svg";
+import Calendar from "@/assets/icons/calendar.svg?react";
+import Clipboard from "@/assets/icons/clipboard.svg?react";
+import Folder from "@/assets/icons/folder.svg?react";
+import UserEdit from "@/assets/icons/userEdit.svg?react";
+import Users from "@/assets/icons/users.svg?react";
 import {
   addNewMession,
   deleteTaskMession,
   editTaskMession,
   getMissionComments,
+  getMissionHistory,
   getMissionStatus,
   getTaskMissions,
   updateMessionStatus,
@@ -57,7 +58,10 @@ export default function MissionDetails({ isOpen, onClose }) {
           <List.Item>
             <div className="grid grid-cols-3 gap-3 w-full">
               <div className="inline-flex items-center gap-2 text-gray-500">
-                <Clipboard />
+                <Clipboard
+                  width={24}
+                  height={24}
+                />
                 <span>{t("MissionPriority")}</span>
               </div>
               <div className="col-span-2 font-medium text-black">
@@ -68,7 +72,10 @@ export default function MissionDetails({ isOpen, onClose }) {
           <List.Item>
             <div className="grid grid-cols-3 gap-3 w-full">
               <div className="inline-flex items-center gap-2 text-gray-500">
-                <Folder />
+                <Folder
+                  width={24}
+                  height={24}
+                />
                 <span>{t("project")}</span>
               </div>
               <div className="col-span-2 font-medium text-black">{isOpen?.title}</div>
@@ -77,7 +84,10 @@ export default function MissionDetails({ isOpen, onClose }) {
           <List.Item>
             <div className="grid grid-cols-3 gap-3 w-full">
               <div className="inline-flex items-center gap-2 text-gray-500">
-                <Calendar />
+                <Calendar
+                  width={20}
+                  height={20}
+                />
                 <span>{t("startDate")}</span>
               </div>
               <div className="col-span-2 font-medium text-black">
@@ -88,7 +98,10 @@ export default function MissionDetails({ isOpen, onClose }) {
           <List.Item>
             <div className="grid grid-cols-3 gap-3 w-full">
               <div className="inline-flex items-center gap-2 text-gray-500">
-                <Calendar />
+                <Calendar
+                  width={20}
+                  height={20}
+                />
                 <span>{t("endDate")}</span>
               </div>
               <div className="col-span-2 font-medium text-black">
@@ -99,7 +112,10 @@ export default function MissionDetails({ isOpen, onClose }) {
           <List.Item>
             <div className="grid grid-cols-3 gap-3 w-full">
               <div className="inline-flex items-center gap-2 text-gray-500">
-                <Users />
+                <Users
+                  width={24}
+                  height={24}
+                />
                 <span>{t("missionResponsibility")}</span>
               </div>
               <div className="col-span-2 font-medium text-black">
@@ -119,7 +135,10 @@ export default function MissionDetails({ isOpen, onClose }) {
           <List.Item>
             <div className="grid grid-cols-3 gap-3 w-full">
               <div className="inline-flex items-center gap-2 text-gray-500">
-                <UserEdit />
+                <UserEdit
+                  width={24}
+                  height={24}
+                />
                 <span>{t("missionCreator")}</span>
               </div>
               <div className="col-span-2 font-medium text-black">
@@ -152,7 +171,7 @@ export default function MissionDetails({ isOpen, onClose }) {
             {
               label: t("missionHistory"),
               key: "3",
-              children: <MissionHistory />,
+              children: <MissionHistory missionId={isOpen?.id} />,
             },
           ]}
         />
@@ -210,19 +229,63 @@ function MissionComments({ missionId }) {
   );
 }
 
-function MissionHistory() {
+function MissionHistory({ missionId }) {
+  const [totalCount, setTotalCount] = useState();
+  const [page, setPage] = useState(1);
+  const { data, isFetching } = useQuery({
+    queryKey: ["missions-history", missionId],
+    queryFn: () =>
+      getMissionHistory(missionId, {
+        PageSize: 6,
+        Page: page,
+        PageIndex: page,
+      }).then((res) => {
+        setTotalCount(res?.data?.totalCount ?? 0);
+        return res;
+      }),
+  });
+
+  console.log(data);
+
   return (
-    <List>
-      {Array.from({ length: 1 })
-        .fill(0)
-        .map((_, index) => (
-          <MissionHistoryItem key={index} />
-        ))}
-    </List>
+    <List
+      dataSource={data?.data?.items || []}
+      loading={isFetching}
+      pagination={{
+        total: totalCount,
+        pageSize: 6,
+        onChange: (page) => {
+          setPage(page);
+        },
+      }}
+      renderItem={(item: any) => (
+        <MissionHistoryItem
+          key={item.id}
+          {...item}
+        />
+      )}
+    />
   );
 }
 
-function MissionHistoryItem() {
+function MissionHistoryItem({ createdByInfo, actionTypeInfo, createdDate, actionTypeId }) {
+  const { t, i18n } = useTranslation();
+  const translations = {
+    // 1: "missionsHistoryItems:add",
+    2: "missionsHistoryItems:edit",
+    // 3: "missionsHistoryItems:delete",
+    // 4: "missionsHistoryItems:view",
+    // 5: "missionsHistoryItems:edit",
+    // 6: "missionsHistoryItems:edit",
+    7: "missionsHistoryItems:addComment",
+    8: "missionsHistoryItems:updateComment",
+    9: "missionsHistoryItems:deleteComment",
+    10: "missionsHistoryItems:addMission",
+    11: "missionsHistoryItems:editMission",
+    12: "missionsHistoryItems:deleteMission",
+    13: "missionsHistoryItems:updateMissionStatus",
+    14: "missionsHistoryItems:editMissionProgress",
+  };
   return (
     <List.Item>
       <div className="flex items-center w-full gap-3">
@@ -230,14 +293,18 @@ function MissionHistoryItem() {
           <LuFileEdit size={20} />
         </span>
         <div className="flex-1">
-          <Typography className="font-medium">Edit</Typography>
+          <Typography className="font-medium">
+            {actionTypeInfo?.[i18n.language == "ar" ? "nameAr" : "nameEn"]}
+          </Typography>
           <Typography.Paragraph className="text-gray-600 text-xs">
-            قام <span className="text-black font-medium">Ahmed Mohammed</span> بتعديل المهمة
+            {t(translations[actionTypeId], {
+              name: createdByInfo?.name ?? createdByInfo?.userName,
+            })}
           </Typography.Paragraph>
         </div>
         <p className="inline-flex items-center gap-2 text-gray-600 text-xs">
           <LuClock size={18} />
-          <span>{dayjs().format("DD MMM YYYY , h:mm A")}</span>
+          <span>{dayjs(createdDate).format("DD MMM YYYY , h:mm A")}</span>
         </p>
       </div>
     </List.Item>
@@ -245,7 +312,7 @@ function MissionHistoryItem() {
 }
 
 function Missions({ missionId }) {
-  const { data } = useQuery({
+  const { data, isFetching } = useQuery({
     queryKey: ["task-messions", missionId],
     queryFn: () =>
       getTaskMissions({
@@ -269,6 +336,7 @@ function Missions({ missionId }) {
 
   return (
     <List
+      loading={isFetching}
       dataSource={data?.data?.items ?? []}
       renderItem={(item: any) => (
         <MissionItem
@@ -291,6 +359,9 @@ function MissionItem({ title, id, statusId, statuses, taskId }) {
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["task-messions"] });
       queryClient.refetchQueries({ queryKey: ["missions"] });
+      queryClient.refetchQueries({
+        queryKey: ["missions-history", taskId],
+      });
     },
   });
 
@@ -300,6 +371,9 @@ function MissionItem({ title, id, statusId, statuses, taskId }) {
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["task-messions"] });
       queryClient.refetchQueries({ queryKey: ["missions"] });
+      queryClient.refetchQueries({
+        queryKey: ["missions-history", taskId],
+      });
     },
   });
 
@@ -413,6 +487,9 @@ function UpdateSelectedMission({ id, title, missionId, onClose }) {
       queryClient.refetchQueries({
         queryKey: ["missions"],
       });
+      queryClient.refetchQueries({
+        queryKey: ["missions-history", missionId],
+      });
       form.resetFields(["title"]);
     },
   });
@@ -449,6 +526,9 @@ function AddNewMission({ id }) {
       });
       queryClient.refetchQueries({
         queryKey: ["missions"],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["missions-history", id],
       });
       form.resetFields(["title"]);
     },

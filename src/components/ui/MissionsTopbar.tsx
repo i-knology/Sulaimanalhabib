@@ -1,6 +1,6 @@
 import { getMembers } from "@/services/meetings";
 import { useQuery } from "@tanstack/react-query";
-import { Avatar, Button } from "antd";
+import { Avatar, Button, Tooltip } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LuPlus, LuSettings2 } from "react-icons/lu";
@@ -47,14 +47,18 @@ export default function MissionTopBar({ search, onMemberClick, onNew }) {
             }}
           >
             {members.map((member) => (
-              <Avatar
-                src={member.profilePicture}
+              <Tooltip
                 key={member.id}
-                onClick={() => onMemberClick(member.id)}
-                alt={member.name ?? member.email}
+                title={member.name}
               >
-                {member.name}
-              </Avatar>
+                <Avatar
+                  src={member.profilePicture}
+                  onClick={() => onMemberClick(member.id)}
+                  alt={member.name ?? member.email}
+                >
+                  {member.name}
+                </Avatar>
+              </Tooltip>
             ))}
           </Avatar.Group>
         </div>

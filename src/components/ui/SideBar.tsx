@@ -1,4 +1,4 @@
-import ProjectIcon from "@/assets/icons/projects.svg";
+import ProjectIcon from "@/assets/icons/projects.svg?react";
 import { useTranslation } from "react-i18next";
 import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
 import { Link, useLocation } from "react-router-dom";

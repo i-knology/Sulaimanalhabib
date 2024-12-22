@@ -1,26 +1,16 @@
+import Delete from "@/assets/icons/delete.svg?react";
+import Download from "@/assets/icons/download.svg?react";
+import File from "@/assets/icons/file.svg?react";
 import useResultModal from "@/hooks/useModal";
 import { removeDocument } from "@/services/projects";
 import { useMutation } from "@tanstack/react-query";
-import { Button } from "antd";
+import { Button, List, Typography } from "antd";
 import { AxiosError } from "axios";
+import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
-import { FiDownloadCloud } from "react-icons/fi";
-import { PiFilePdfLight } from "react-icons/pi";
-import { RiDeleteBinLine } from "react-icons/ri";
 import { useParams } from "react-router-dom";
 
-export default function AttachmentCard({ document: attachment, refetch }) {
-  const handleDownload = (url: string, fileName: string) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", fileName);
-    link.style.display = "none";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    // document.body.removeChild(link);
-  };
-
+export default function AttachmentCard({ document: item, refetch }) {
   const { t } = useTranslation();
   const { confirm, success, error } = useResultModal();
   const { projectId } = useParams();
@@ -49,49 +39,43 @@ export default function AttachmentCard({ document: attachment, refetch }) {
       title: t("confirmDocumentRemovalTitle"),
       subtitle: t("confirmDocumentRemovalSubtitle"),
     }).then(() => {
-      mutation.mutate({ documentId: attachment?.id, projectId });
+      mutation.mutate({ documentId: item?.id, projectId });
     });
   };
 
-  console.log(attachment);
-
   return (
-    <div className="p-2 bg-white rounded-lg mb-3">
-      <div className="flex items-center px-1 justify-between">
-        <div className="w-full">
-          <div className="flex items-center w-full">
-            <div
-              className="bg-red-50 text-red-700"
-              onClick={() => {
-                console.log("Delete");
-              }}
-            >
-              <PiFilePdfLight size={30} />
-            </div>
-
-            <div className="mx-2 w-full flex flex-col">
-              <span>{attachment?.title}</span>
-              <span className="text-gray-300">{"15 MB"}</span>
-            </div>
-          </div>
+    <List.Item className="border-t border-t-gray-200 first:border-t-0 first:!pt-0">
+      <div className="flex items-center gap-3 w-full">
+        <div className="w-10 h-10 flex-shrink-0 inline-flex items-center justify-center bg-lightGray rounded-lg">
+          <File />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex-1">
+          <Typography className="font-medium">{item.title}</Typography>
+          <Typography.Paragraph className="text-gray-600 !mb-0">
+            {dayjs(item.modifiedDate).format("DD MMMM YYYY h:mmA")}
+          </Typography.Paragraph>
+        </div>
+        <div className="inline-flex gap-2">
           <Button
-            className="bg-green-50 text-primary"
-            onClick={() => handleDownload(attachment?.documentUrl, attachment?.title)}
-          >
-            <FiDownloadCloud size={20} />
-          </Button>
+            type="link"
+            href={item.documentUrl}
+            download={item.title}
+            icon={<Download />}
+            className="!rounded-lg !w-10 h-10 !min-w-10"
+            disabled={mutation.isPending}
+            loading={mutation.isPending}
+          />
+          {/* delete attachment is missing ENDPOINT */}
           <Button
-            className="bg-red-50 text-red-700"
-            onClick={() => {
-              handleDelete();
-            }}
-          >
-            <RiDeleteBinLine size={20} />
-          </Button>
+            type="primary"
+            icon={<Delete />}
+            className="!rounded-lg !bg-red-500/5 text-red-500 !w-10 h-10 !min-w-10"
+            onClick={handleDelete}
+            disabled={mutation.isPending}
+            loading={mutation.isPending}
+          />
         </div>
       </div>
-    </div>
+    </List.Item>
   );
 }

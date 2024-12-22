@@ -1,5 +1,4 @@
-import { handleLogin } from "@/redux/slices/loginSlice";
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import Cookies from "universal-cookie";
@@ -16,16 +15,17 @@ export default function Guard({ children, type }: GuardProps) {
   const { user } = useSelector((state: any) => state.auth);
 
   const token = cookies.get("token");
-  const userData = useMemo(() => {
-    const data = cookies.get("user");
-    return token ? { ...data, token } : null;
-  }, [token]);
+  // const userData = useMemo(() => {
+  //   const data = JSON.parse(localStorage.getItem("user") ?? "");
+  //   console.log(data);
+  //   return token ? { ...user, token } : null;
+  // }, [token]);
 
-  useEffect(() => {
-    if (userData && userData.id && !user) {
-      dispatch(handleLogin(userData));
-    }
-  }, [dispatch, userData, user]);
+  // useEffect(() => {
+  //   if (userData && userData.id && !user) {
+  //     dispatch(handleLogin(userData));
+  //   }
+  // }, [dispatch, userData, user]);
 
   const isPrivate = type === "Private";
 

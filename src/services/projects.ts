@@ -112,6 +112,37 @@ async function updateProject(data) {
     .then((res) => res.data);
 }
 
+async function addDocuments(data) {
+  const { id } = data;
+  const formData = new FormData();
+
+  for (const key in data) {
+    const item = data[key];
+    if (key == "files") {
+      item?.forEach((file) => {
+        console.log(file);
+        formData.append("files", file, file.name);
+      });
+    } else {
+      formData.append(key, item);
+    }
+  }
+
+  delete data.id;
+  return instance
+    .put("Project/AddDocuments/" + id, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    .then((res) => res.data);
+}
+
+async function addMembers(data) {
+  const { id } = data;
+
+  delete data.id;
+  return instance.put("Project/AddMembers/" + id, data.MemberIds, {}).then((res) => res.data);
+}
+
 async function cancelProject(id) {
   return instance.put(`Project/Cancel/${id}`).then((res) => res.data);
 }
@@ -146,13 +177,15 @@ async function removeMember(data) {
 async function removeDocument(data) {
   const documents = [data.documentId];
   return instance
-    .delete(`ProjectMession/DeleteDocuments/${data.projectId}`, {
+    .delete(`Project/DeleteDocuments/${data.projectId}`, {
       data: documents,
     })
     .then((res) => res.data);
 }
 
 export {
+  addDocuments,
+  addMembers,
   cancelProject,
   closeProject,
   createProject,

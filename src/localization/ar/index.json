@@ -52,6 +52,13 @@
     "aboutMeeting": "عن الاجتماع",
     "missions": "المهام",
 
+    "missionSubject": "موضوع المهمة",
+    "addNewAttachment": "اضافة مرفق جديد",
+    "addNewMember": "اعضاء عضو جديد",
+    "ongoingMissions": "مهمات قائمة",
+    "completedMissions": "مهمات مكتملة",
+    "notStartedMissions": "مهمات لم تبدأ",
+
     "meetingDescription": "وصف الاجتماع",
     "meetingDate": "تاريخ الاجتماع",
     "fromHour": "من الساعة",
@@ -281,7 +288,7 @@
     "currentLocation": "الموقع الحالي",
     "saveLocation": "حفظ الموقع",
 
-    "projectMembers": "أعضاء المشروع",
+    "projectMembers": "فريق المشروع",
     "committeeMmeber": "أعضاء اللحنه",
 
     "additionalLinks": "روابط اضافية",
@@ -340,5 +347,16 @@
     "august": "أغسطس",
     "july": "يوليو",
     "september": "سبتمبر"
+  },
+  "missionsHistoryItems": {
+    "edit": "قام {{name}} بتعديل المهمة",
+    "addComment": "قام {{name}} باضافة تعليق",
+    "updateComment": "قام {{name}} تعديل التعليق",
+    "deleteComment": "قام {{name}} حذف التعليق",
+    "addMission": "قام {{name}} اضافة مهمة",
+    "editMission": "قام {{name}} تعديل بيانات المهمة",
+    "deleteMission": "قام {{name}} حذف المهمة",
+    "updateMissionStatus": "قام {{name}} تحديث حالة المهمة",
+    "editMissionProgress": "قام {{name}} تحسين اداء وحركة المهمة"
   }
 }

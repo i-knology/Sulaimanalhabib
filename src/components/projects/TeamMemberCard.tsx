@@ -1,4 +1,4 @@
-import Delete from "@/assets/icons/delete.svg";
+import Delete from "@/assets/icons/delete.svg?react";
 import useResultModal from "@/hooks/useModal";
 import { removeMember } from "@/services/projects";
 import { useMutation } from "@tanstack/react-query";

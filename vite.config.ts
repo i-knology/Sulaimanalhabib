@@ -8,7 +8,9 @@ export default defineConfig({
   plugins: [
     react(),
     svgr({
-      include: "**/*.svg",
+      // svgr options: https://react-svgr.com/docs/options/
+      // svgrOptions: { exportType: "named", ref: true, svgo: false, titleProp: true },
+      // include: "**/*.svg",
     }),
   ],
   resolve: {

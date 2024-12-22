@@ -5,7 +5,7 @@ import { LuClock } from "react-icons/lu";
 export default function MissionComment({ userInfo, comments, createdDate }) {
   // const { t } = useTranslation();
   return (
-    <div className="space-y-3 mt-2 pt-2 border-t border-t-gray-200 first:mt-0 first:pt-0 first:border-t-none">
+    <div className="space-y-3 mt-2 pt-2 border-t border-t-gray-200 first:mt-0 first:pt-0 first:border-t-0">
       <div className="flex items-center w-full gap-3">
         <Avatar
           size={32}
