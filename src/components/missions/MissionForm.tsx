@@ -41,6 +41,7 @@ export default function MissionForm({ errors, action, data }: CommitteeFormProps
   const projectId = Form.useWatch("projectId", form);
   const [files, setFiles] = useState<any>();
   const [allMembers, setAllMembers] = useState([]);
+  const [projectEndDate, setProjectEndDate] = useState();
 
   const { data: projects = [], isFetching: isProjectsFetching } = useQuery({
     queryKey: ["projects", searchKey],
@@ -76,14 +77,15 @@ export default function MissionForm({ errors, action, data }: CommitteeFormProps
 
   useEffect(() => {
     if (projectId) {
+      const project = projects.find((e) => e.value == projectId?.value);
+
       setAllMembers(
-        projects
-          .find((e) => e.value == projectId?.value)
-          ?.members?.map((e) => ({
-            label: e?.userInfo?.name,
-            value: e?.userId,
-          })),
+        project?.members?.map((e) => ({
+          label: e?.userInfo?.name,
+          value: e?.userId,
+        })),
       );
+      setProjectEndDate(project?.endDate);
     } else {
       setAllMembers(members);
     }
@@ -263,7 +265,7 @@ export default function MissionForm({ errors, action, data }: CommitteeFormProps
           onSearch={setProjectSearchKey}
           onChange={() => setProjectSearchKey("")}
           onSelect={() => {
-            form.resetFields(["userId"]);
+            form.resetFields(["userId", "StartDate", "EndDate"]);
           }}
           className="w-full"
         />

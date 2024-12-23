@@ -11,6 +11,8 @@ import SearchBox from "./SearchBox";
 export default function MissionTopBar({ search, onMemberClick, onNew, onReset }) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [searchKeyword, setSearchKeyword] = useState<string | undefined>();
+  const [userId, setUserId] = useState<string | undefined>();
 
   const { data: members = [] } = useQuery({
     queryKey: ["members"],
@@ -25,13 +27,13 @@ export default function MissionTopBar({ search, onMemberClick, onNew, onReset })
 
   return (
     <>
-      <div className="p-2 rounded-md bg-white flex sm:items-center gap-3 flex-col sm:flex-row ">
+      <div className="p-2 rounded-md bg-white flex md:items-center gap-3 flex-col md:flex-row ">
         <div className="flex items-center gap-[8px]">
           <Button
             icon={<LuSettings2 size={24} />}
             size="small"
             type="text"
-            className="text-primary"
+            className="text-primary flex-shrink-0"
             onClick={() => setIsOpen(true)}
           />
           <h6 className="text-sm">{t("missionResponsibility")}</h6>
@@ -54,33 +56,45 @@ export default function MissionTopBar({ search, onMemberClick, onNew, onReset })
               >
                 <Avatar
                   src={member.profilePicture}
-                  onClick={() => onMemberClick(member.id)}
+                  onClick={() => {
+                    onMemberClick(member.id);
+                    setUserId(member.id);
+                  }}
                   alt={member.name ?? member.email}
-                  className="cursor-pointer"
+                  className={`cursor-pointer transition duration-300  !border-2 ${
+                    member.id == userId ? "!border-primary" : ""
+                  }`}
                 >
                   {member.name}
                 </Avatar>
               </Tooltip>
             ))}
           </Avatar.Group>
-          <Button
-            type="text"
-            icon={<PiX size={20} />}
-            htmlType="button"
-            onClick={onReset}
-            size="small"
-            color="danger"
-          >
-            {t("clearFilter")}
-          </Button>
+          {(searchKeyword || userId) && (
+            <Button
+              type="text"
+              icon={<PiX size={20} />}
+              htmlType="button"
+              onClick={() => {
+                onReset();
+                setSearchKeyword(undefined);
+                setUserId(undefined);
+              }}
+              size="small"
+              className="rounded-lg text-red-500"
+            >
+              {t("clearFilter")}
+            </Button>
+          )}
         </div>
         <span className="flex-1"></span>
 
-        <div className="flex-shrink-0 inline-flex gap-3 w-full sm:w-auto">
+        <div className="flex-shrink-0 inline-flex gap-3 w-full md:w-auto">
           {search && (
             <SearchBox
               onChange={(e) => {
                 search(e.target.value);
+                setSearchKeyword(e.target.value);
               }}
             />
           )}
@@ -93,7 +107,11 @@ export default function MissionTopBar({ search, onMemberClick, onNew, onReset })
         </div>
       </div>
       <MembersForm
-        onMemberClick={onMemberClick}
+        onMemberClick={(value) => {
+          onMemberClick(value);
+          setUserId(value);
+        }}
+        selectedId={userId}
         isOpen={isOpen}
         onClose={setIsOpen}
       />

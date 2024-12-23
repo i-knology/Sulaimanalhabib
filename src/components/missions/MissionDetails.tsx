@@ -78,7 +78,9 @@ export default function MissionDetails({ isOpen, onClose }) {
                 />
                 <span>{t("project")}</span>
               </div>
-              <div className="col-span-2 font-medium text-black">{isOpen?.title}</div>
+              <div className="col-span-2 font-medium text-black">
+                {isOpen?.projectInfo?.projectName ?? isOpen?.title ?? t("notAvailable")}
+              </div>
             </div>
           </List.Item>
           <List.Item>
@@ -347,7 +349,7 @@ function Missions({ missionId }) {
   );
 }
 
-function MissionItem({ title, id, statusId, statuses, taskId }) {
+function MissionItem({ title, id, statusId, status, statuses, taskId }) {
   const { i18n, t } = useTranslation();
   const queryClient = useQueryClient();
   const [isEditAble, setIsEditAble] = useState<boolean>(false);
@@ -418,14 +420,19 @@ function MissionItem({ title, id, statusId, statuses, taskId }) {
             options={statuses?.data?.items}
             className="w-28 !rounded-full"
             // rootClassName="!rounded-full"
-
+            labelInValue
             placeholder={t("missionStatus")}
-            defaultValue={statusId}
+            defaultValue={
+              statusId && {
+                value: statusId,
+                label: status?.[i18n.language == "ar" ? "nameAr" : "nameEn"],
+              }
+            }
             variant="filled"
-            onChange={(value) => {
+            onChange={(status) => {
               mutation.mutate({
                 id,
-                status: value,
+                status: status?.value,
               });
             }}
             disabled={mutation.isPending}

@@ -1,12 +1,12 @@
 import { getMembers } from "@/services/meetings";
 import { useQuery } from "@tanstack/react-query";
 import { Drawer, Form, Image, List, Radio, Typography } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FormBtn from "../ui/FormBtn";
 import SearchBox from "../ui/SearchBox";
 
-export default function MembersForm({ onMemberClick, isOpen, onClose }) {
+export default function MembersForm({ onMemberClick, isOpen, onClose, selectedId }) {
   const { t } = useTranslation();
   const [form] = Form.useForm();
 
@@ -29,6 +29,10 @@ export default function MembersForm({ onMemberClick, isOpen, onClose }) {
     onClose();
     form.resetFields(["userId"]);
   }
+
+  useEffect(() => {
+    form.setFieldValue("userId", selectedId);
+  }, [selectedId]);
 
   return (
     <Drawer
@@ -60,6 +64,7 @@ export default function MembersForm({ onMemberClick, isOpen, onClose }) {
           id="select-mission-responsibility"
           form={form}
           onFinish={handleFinish}
+          initialValues={{ userId: selectedId }}
         >
           <Form.Item
             name="userId"
