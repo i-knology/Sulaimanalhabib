@@ -37,8 +37,11 @@ export default function errorException(error: ErrorExceptionProp) {
             message: "Permission not allowed",
             description: "You don't have permission to do this action",
           });
-
-        return errors;
+        else
+          return notification.error({
+            message: "Server error",
+            description: error?.response?.data?.map((e) => e.errorMessage).join("\n"),
+          });
       }
 
       default:

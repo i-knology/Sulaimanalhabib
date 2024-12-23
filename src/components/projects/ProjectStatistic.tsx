@@ -23,8 +23,7 @@ export default function ProjectStatistic({ series }) {
                     fontWeight: 600,
                     fontSize: "14px",
                     formatter: (v) => {
-                      console.log(v);
-                      return "4";
+                      return series.reduce((a, b) => a + b, 0);
                     },
                   },
                 },

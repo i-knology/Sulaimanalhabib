@@ -4,10 +4,11 @@ import { Avatar, Button, Tooltip } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LuPlus, LuSettings2 } from "react-icons/lu";
+import { PiX } from "react-icons/pi";
 import MembersForm from "../missions/MembersForm";
 import SearchBox from "./SearchBox";
 
-export default function MissionTopBar({ search, onMemberClick, onNew }) {
+export default function MissionTopBar({ search, onMemberClick, onNew, onReset }) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -55,12 +56,23 @@ export default function MissionTopBar({ search, onMemberClick, onNew }) {
                   src={member.profilePicture}
                   onClick={() => onMemberClick(member.id)}
                   alt={member.name ?? member.email}
+                  className="cursor-pointer"
                 >
                   {member.name}
                 </Avatar>
               </Tooltip>
             ))}
           </Avatar.Group>
+          <Button
+            type="text"
+            icon={<PiX size={20} />}
+            htmlType="button"
+            onClick={onReset}
+            size="small"
+            color="danger"
+          >
+            {t("clearFilter")}
+          </Button>
         </div>
         <span className="flex-1"></span>
 

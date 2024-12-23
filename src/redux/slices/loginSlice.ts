@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
 
-interface User {
+export interface User {
   id: string;
   language: string;
   expiration: string;

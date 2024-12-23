@@ -54,6 +54,12 @@ export default function Missions() {
   };
   const handleSearch = (value: string) => setSearchKey(value);
 
+  function handleRest() {
+    setSearchKey(undefined);
+    setUserId(undefined);
+    setStatusId(undefined);
+  }
+
   // Callbacks for mutation
   const handleSuccess = () => {
     toggleDrawer();
@@ -83,6 +89,7 @@ export default function Missions() {
           search={handleSearch}
           onMemberClick={setUserId}
           onNew={toggleDrawer}
+          onReset={handleRest}
         />
 
         {displayItems ? (

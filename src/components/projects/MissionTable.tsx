@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LuEye, LuFileEdit } from "react-icons/lu";
+import { Link } from "react-router-dom";
 import MissionDetails from "../missions/MissionDetails";
 
 const MissionTable = ({ data, totalCount, dispatch, isFetching, onEdit }) => {
@@ -18,8 +19,10 @@ const MissionTable = ({ data, totalCount, dispatch, isFetching, onEdit }) => {
     // },
     {
       title: t("projectName"),
-      dataIndex: "title",
+      dataIndex: ["projectInfo", "projectName"],
       key: "title",
+      render: (value, record) =>
+        value ? <Link to={`/projects/${record.projectId}`}>{value}</Link> : "-",
     },
     {
       title: t("createdBy"),

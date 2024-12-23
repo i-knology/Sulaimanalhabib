@@ -24,7 +24,7 @@ export default function ProjectsMissions() {
     queryFn: () => {
       return getAllMissions({
         ...filterOptions,
-        // ProjectId: projectId,
+        ProjectId: projectId,
       });
     },
   });

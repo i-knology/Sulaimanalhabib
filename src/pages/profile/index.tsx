@@ -1,4 +1,5 @@
 import HrDivider from "@/components/ui/HrDivider";
+import { handleLogin, logout, User } from "@/redux/slices/loginSlice";
 import instance from "@/utils/instance";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { GetProp, UploadProps } from "antd";
@@ -7,7 +8,7 @@ import { serialize } from "object-to-formdata";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LuImagePlus } from "react-icons/lu";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -15,6 +16,7 @@ export default function Profile() {
   const { t } = useTranslation();
   const { user } = useSelector((state: any) => state.auth);
   console.log(user);
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
 
   const [imageUrl, setImageUrl] = useState<string>();
@@ -35,17 +37,27 @@ export default function Profile() {
 
   const { refetch } = useQuery({
     queryKey: ["profile"],
-    queryFn: () => instance.get("Users/UserDashBoard"),
+    queryFn: () =>
+      instance.get("Users/GetTokenInfo").then((res) => {
+        console.log(res.data.data);
+        dispatch(handleLogin(res.data.data as User));
+      }),
   });
 
   const muatation = useMutation({
-    mutationFn: (values) => {
-      console.log(values);
-      return instance.post("Users/UserChangeInfo", serialize(values), {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    mutationFn: (values: any) => {
+      return instance
+        .post("Users/UserChangeInfo", serialize(values), {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(() => {
+          if (values?.CurrentPassword && values?.Password) {
+            return dispatch(logout());
+          }
+          refetch();
+        });
     },
   });
 
@@ -144,17 +156,17 @@ export default function Profile() {
                 className="m-0"
                 label={t("newPassword")}
                 name="Password"
-                dependencies={["currentPassword"]}
+                dependencies={["CurrentPassword"]}
                 rules={[
                   // { required: true, message: t("validation:requiredField") },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
-                      if (!value || getFieldValue("CurrentPassword") === value) {
-                        return Promise.resolve();
+                      if (value && getFieldValue("CurrentPassword") === value) {
+                        return Promise.reject(
+                          new Error(t("validation:passwordShouldNotMatchWithCurrent")),
+                        );
                       }
-                      return Promise.reject(
-                        new Error(t("validation:passwordShouldNotMatchWithCurrent")),
-                      );
+                      return Promise.resolve();
                     },
                   }),
                 ]}
@@ -174,7 +186,7 @@ export default function Profile() {
                       if (!value || getFieldValue("Password") === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(new Error(t("validation:passwordMismatch")));
+                      return Promise.reject(new Error(t("validation:passwordsDoNotMatch")));
                     },
                   }),
                 ]}

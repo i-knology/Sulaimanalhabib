@@ -34,7 +34,7 @@ import TeamMemberCard from "./TeamMemberCard";
 export default function ProjectDetails() {
   const { projectId } = useParams();
   const { t } = useTranslation();
-  const [selectedTab, setSelectedTab] = useState("tasks");
+  const [selectedTab, setSelectedTab] = useState("members");
 
   // const queryClient = useQueryClient();
   const globalModal = useResultModal();
@@ -227,11 +227,9 @@ export default function ProjectDetails() {
           <div className="p-4 rounded-xl bg-white space-y-4">
             <ProjectStatistic
               series={[
-                (data?.data?.notStartedCount || 0) +
-                  (data?.data?.pendingCount || 0) +
-                  (data?.data?.lateCount || 0),
-                data?.data?.completedCount ?? 0,
-                data?.data?.canceledCount ?? 0,
+                project?.tasksNewCount ?? 0,
+                project?.tasksCompletedCount ?? 0,
+                project?.tasksPendingCount ?? 0,
               ]}
             />
           </div>

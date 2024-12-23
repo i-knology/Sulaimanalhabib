@@ -272,12 +272,14 @@
     "contactPoints": "Contact Points",
     "browser": "Browser",
     "meetingNumber": "Meeting Number",
-    "cpassword": "Password"
+    "cpassword": "Password",
+    "clearFilter": "Clear filter"
   },
   "validation": {
     "requiredField": "Field is required",
     "invalidEmail": "Invalid email",
-    "passwordsDoNotMatch": "Passwords do not match"
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordShouldNotMatchWithCurrent": "Password should not match with current password"
   },
   "statuses": {
     "urgent": "important and urgent",

@@ -305,12 +305,14 @@
     "addComment": "اضافة تعليق",
     "noData": "لا توجد بيانات",
     "missionStatus": "الحالة",
-    "uploadProfilePicture": "تحميل صورة الملف الشخصي"
+    "uploadProfilePicture": "تحميل صورة الملف الشخصي",
+    "clearFilter": "مسح التصفية"
   },
   "validation": {
     "requiredField": "يجب ملئ الحقل",
     "invalidEmail": "بريد الكتروني غير صالح",
-    "passwordsDoNotMatch": "كلمات المرور غير متطابقة"
+    "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+    "passwordShouldNotMatchWithCurrent": "كلمة المرور الجديد لا يجب ان تكون   مطابقة لكلمة المرور الحالية"
   },
   "statuses": {
     "urgent": "مهم و عاجل",
