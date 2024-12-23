@@ -42,15 +42,17 @@ export default function TopBar({
 
       {displayItems && (
         <Segmented
-          className="overflow-hidden"
+          className="overflow-hidden rounded-xl p-1"
           options={[
             {
               icon: <TableIcon />,
               value: true,
+              className: "!rounded-lg ",
             },
             {
               icon: <GridIcon />,
               value: false,
+              className: "!rounded-lg ",
             },
           ]}
           defaultValue={!triggerItemAs}

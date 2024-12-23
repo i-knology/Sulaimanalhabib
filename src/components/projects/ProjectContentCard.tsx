@@ -25,6 +25,13 @@ export default function ProjectContentCard({
     queryKey: ["projects-status-lookup"],
   });
 
+  console.log(
+    statusInfo && {
+      value: statusInfo?.id,
+      label: statusInfo?.[i18n.language == "ar" ? "nameAr" : "nameEn"],
+    },
+  );
+
   const [selectedStatus, setSelectedStatus] = useState();
 
   useEffect(() => {
@@ -52,7 +59,12 @@ export default function ProjectContentCard({
           size="small"
           variant="filled"
           className="!w-28 flex-shrink-0"
-          defaultValue={selectedStatus}
+          value={
+            statusInfo && {
+              value: statusInfo?.id,
+              label: statusInfo?.[i18n.language == "ar" ? "nameAr" : "nameEn"],
+            }
+          }
           labelInValue
           options={data?.data?.items?.map((status) => ({
             label: status?.[i18n.language == "ar" ? "nameAr" : "nameEn"],
