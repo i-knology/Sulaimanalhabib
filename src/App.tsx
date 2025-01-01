@@ -14,7 +14,6 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { Provider } from "react-redux";
-import { ResultContextProvider } from "./contexts/ModalContext";
 import store from "./redux/store";
 
 dayjs.extend(utc);
@@ -59,34 +58,32 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <ResultContextProvider>
-        <QueryClientProvider client={queryClient}>
-          <ConfigProvider
-            theme={lightTheme}
-            direction={i18n.language == "ar" ? "rtl" : "ltr"}
-            locale={i18n.language == "ar" ? ar_eg : en_us}
-            input={{
-              autoComplete: "off",
-              allowClear: false,
-              className: "rounded-xl",
-            }}
-            button={{
-              className: "rounded-xl",
-            }}
-            datePicker={{
-              className: "rounded-xl",
-            }}
-            select={{
-              className: "rounded-xl",
-            }}
-            timePicker={{
-              className: "rounded-xl",
-            }}
-          >
-            <Routes />
-          </ConfigProvider>
-        </QueryClientProvider>
-      </ResultContextProvider>
+      <QueryClientProvider client={queryClient}>
+        <ConfigProvider
+          theme={lightTheme}
+          direction={i18n.language == "ar" ? "rtl" : "ltr"}
+          locale={i18n.language == "ar" ? ar_eg : en_us}
+          input={{
+            autoComplete: "off",
+            allowClear: false,
+            className: "rounded-xl",
+          }}
+          button={{
+            className: "rounded-xl",
+          }}
+          datePicker={{
+            className: "rounded-xl",
+          }}
+          select={{
+            className: "rounded-xl",
+          }}
+          timePicker={{
+            className: "rounded-xl",
+          }}
+        >
+          <Routes />
+        </ConfigProvider>
+      </QueryClientProvider>
     </Provider>
   );
 }

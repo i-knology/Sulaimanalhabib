@@ -141,6 +141,14 @@ a {
   @apply !w-8 !h-8 !rounded-full !inline-flex align-middle items-center justify-center;
 }
 
+.ant-picker-calendar th {
+  @apply bg-gray-100 !p-2 first:rounded-s-lg last:rounded-e-lg !text-sm truncate;
+}
+
 .ant-input-show-count-suffix {
   @apply text-xs text-gray-500 font-medium;
+}
+
+.ant-picker-calendar .ant-picker-panel {
+  @apply mt-2 pt-2;
 }

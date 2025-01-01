@@ -12,7 +12,7 @@ export default function AuthWrapper({ children }) {
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-dvh bg-white">
       <div className="p-8 flex items-center justify-center">{children}</div>
 
-      <div className="bg-[url(/auth-bg.svg)] bg-cover bg-no-repeat hidden md:block">
+      <div className="bg-[url(/auth-bg.png)] bg-cover bg-no-repeat hidden md:block">
         <div className="w-full h-full bg-gradient-to-t from-primary/[0.92] to-secondary/[0.92] flex items-end justify-center">
           <div className="space-y-4 w-full max-w-lg mx-auto text-center p-6 pb-20">
             <a
@@ -24,8 +24,8 @@ export default function AuthWrapper({ children }) {
               className="mx-auto table mb-8"
             >
               <img
-                src="/logo.png"
-                width={180}
+                src="/white-logo.png"
+                width={300}
                 // height={78}
                 alt={import.meta.env.VITE_APP_NAME}
               />

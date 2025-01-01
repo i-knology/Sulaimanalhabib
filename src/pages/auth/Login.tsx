@@ -1,5 +1,4 @@
 import AuthWrapper from "@/components/auth/AuthWrapper";
-import useResultModal from "@/hooks/useModal";
 import { handleLogin } from "@/redux/slices/loginSlice";
 import { login, loginParameter } from "@/services/auth";
 import errorException from "@/utils/errorException";
@@ -14,24 +13,17 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const { t } = useTranslation();
   const [form] = Form.useForm();
-  const globalModal = useResultModal();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const successLogin = (res: AxiosResponse) => {
     dispatch(handleLogin(res?.data));
     navigate("/");
-    globalModal.success({
-      title: t("successLogin"),
-      subtitle: "",
-    });
   };
 
   const errorLogin = (error: AxiosError) => {
     const message = errorException(error);
-    if (message) {
-      globalModal.error(t("someThingWentWrong"), message);
-    }
+    console.log(message);
   };
 
   const mutation: UseMutationResult<AxiosResponse, AxiosError, loginParameter> = useMutation({

@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
@@ -11,7 +11,6 @@ interface GuardProps {
 }
 
 export default function Guard({ children, type }: GuardProps) {
-  const dispatch = useDispatch();
   const { user } = useSelector((state: any) => state.auth);
 
   const token = cookies.get("token");

@@ -1,4 +1,3 @@
-import HrDivider from "@/components/ui/HrDivider";
 import { handleLogin, logout, User } from "@/redux/slices/loginSlice";
 import instance from "@/utils/instance";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -24,8 +23,8 @@ export default function Profile() {
   useEffect(() => {
     form.setFieldsValue({
       Email: user?.email,
-      FullName: user.fullName,
-      PhoneNumber: user.mobileNo,
+      FullName: user?.fullName,
+      PhoneNumber: user?.mobileNo,
     });
   }, [user]);
 
@@ -193,9 +192,8 @@ export default function Profile() {
               >
                 <Input.Password placeholder={t("confirmNewPassword") + "..."} />
               </Form.Item>
-              <HrDivider />
               <Button
-                className="bg-gradient-to-r from-primary/[0.92] to-secondary/[0.92] w-full"
+                className="w-full"
                 type="primary"
                 htmlType="submit"
                 form="profile-update-form"

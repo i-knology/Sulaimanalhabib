@@ -2,12 +2,13 @@ import { ThemeConfig } from "antd";
 
 const lightTheme: ThemeConfig = {
   token: {
-    colorPrimary: "#22baed",
+    colorPrimary: "#111111",
     colorBgContainer: "#fff",
-    colorSplit: "#F2F2F21A",
+    colorSplit: "#F2F2F2",
     fontFamily: "SuisseIntl",
     controlHeight: 50,
-    colorPrimaryActive: "#22baed",
+    colorPrimaryActive: "#111111",
+    fontSize: 14,
   },
   components: {
     Table: {
@@ -18,7 +19,7 @@ const lightTheme: ThemeConfig = {
       cellPaddingInline: 8,
     },
     Button: {
-      defaultColor: "#22baed",
+      defaultColor: "#111111",
       boxShadow: "none",
     },
     Select: {
@@ -32,11 +33,10 @@ const lightTheme: ThemeConfig = {
       cellHeight: 14,
     },
     Card: {
-      colorBorder: "transparent",
       boxShadow: "0 0 0 1px rgba(0,0,0,.05)",
     },
     Segmented: {
-      itemSelectedColor: "#22baed",
+      itemSelectedColor: "#111111",
     },
     Pagination: {
       itemActiveBg: "black",
