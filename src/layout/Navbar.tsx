@@ -10,6 +10,7 @@ import {} from "react-redux";
 import { logout } from "@/redux/slices/loginSlice";
 import { LuChevronDown } from "react-icons/lu";
 import { useDispatch } from "react-redux";
+import MobileSideMenu from "./MobileSideMenu";
 
 export default function Navbar() {
   const { t, i18n } = useTranslation();
@@ -110,7 +111,7 @@ export default function Navbar() {
                 shape="circle"
                 size="middle"
                 type="primary"
-                className="font-medium bg-gray-50 text-gray-700 hover:!bg-gray-50 hover:!text-gray-700"
+                className="font-medium bg-gray-50 text-gray-700 hover:!bg-gray-50 hover:!text-gray-700 hidden md:block"
                 onClick={() => i18n.changeLanguage(i18n.language == "ar" ? "en" : "ar")}
               >
                 {i18n.language == "ar" ? "ع" : "EN"}
@@ -123,7 +124,7 @@ export default function Navbar() {
                 className="bg-gray-50 text-gray-700 hover:!bg-gray-50 hover:!text-gray-700"
               />
 
-              <div className="hidden lg-md:block mx-2">
+              <div className="lg:mx-2">
                 <Divider
                   className="py-4 px-[.5px] bg-gray-100"
                   type="vertical"
@@ -166,6 +167,8 @@ export default function Navbar() {
               </Dropdown>
             </div>
           </div>
+
+          <MobileSideMenu />
         </div>
       </div>
     </>

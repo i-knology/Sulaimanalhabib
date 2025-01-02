@@ -47,7 +47,8 @@
     "incomingCourses": "محاضرات قادمة",
     "completedCourses": "محاضرات منتهية",
     "coursesStatistics": "احصائيات المحاضرات",
-    "year": "السنة"
+    "year": "السنة",
+    "menu": "القائمة"
   },
   "months": {
     "january": "يناير",

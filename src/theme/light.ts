@@ -21,6 +21,7 @@ const lightTheme: ThemeConfig = {
     Button: {
       defaultColor: "#111111",
       boxShadow: "none",
+      controlHeight: 46,
     },
     Select: {
       selectorBg: "#fff",
