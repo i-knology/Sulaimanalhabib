@@ -112,7 +112,13 @@ export default function Navbar() {
                 size="middle"
                 type="primary"
                 className="font-medium bg-gray-50 text-gray-700 hover:!bg-gray-50 hover:!text-gray-700 hidden md:block"
-                onClick={() => i18n.changeLanguage(i18n.language == "ar" ? "en" : "ar")}
+                onClick={() => {
+                  i18n.changeLanguage(i18n.language == "ar" ? "en" : "ar");
+                  localStorage.setItem(
+                    "locale",
+                    i18n.language == "ar" ? "en" : "ar"
+                  );
+                }}
               >
                 {i18n.language == "ar" ? "ع" : "EN"}
               </Button>
@@ -133,10 +139,7 @@ export default function Navbar() {
             </div>
 
             <div className="hidden lg-md:flex w-full">
-              <Dropdown
-                menu={{ items: menueItems }}
-                trigger={["click"]}
-              >
+              <Dropdown menu={{ items: menueItems }} trigger={["click"]}>
                 <Space className="cursor-pointer flex justify-between">
                   <div className="flex items-center mx-2 whitespace-nowrap">
                     <Image
@@ -174,3 +177,4 @@ export default function Navbar() {
     </>
   );
 }
+
